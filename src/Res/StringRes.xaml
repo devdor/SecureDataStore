@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <sys:String x:Key="StrAppDisplayName">SecureDataStore</sys:String>
+    <sys:String x:Key="StrPunctuation">...</sys:String>
+    <sys:String x:Key="StrFile">File</sys:String>
+    <sys:String x:Key="StrExit">Exit</sys:String>
+    <sys:String x:Key="StrHelp">Help</sys:String>
+    <sys:String x:Key="StrAbout">About</sys:String>
+    <sys:String x:Key="StrOK">OK</sys:String>
+    <sys:String x:Key="StrCancel">Cancel</sys:String>
+    <sys:String x:Key="StrReady">Ready</sys:String>
+    <sys:String x:Key="StrOpen">Open</sys:String>
+    <sys:String x:Key="StrNew">New</sys:String>
+    <sys:String x:Key="StrDatabase">Database</sys:String>
+    <sys:String x:Key="StrPassword">Password</sys:String>
+    <sys:String x:Key="StrGestureCtrl_Shift_N">CTRL+SHIFT+N</sys:String>
+    <sys:String x:Key="StrGestureCtrl_O">CTRL+O</sys:String>
+    <sys:String x:Key="StrGestureAlt_F4">ALT+F4</sys:String>
+    <sys:String x:Key="StrAdd">Add</sys:String>
+    <sys:String x:Key="StrConfirm">Confirm</sys:String>
+    <sys:String x:Key="StrToolTipAddSecItem">Add new Secure item</sys:String>
+    <sys:String x:Key="StrToolTipOpenDatabaseFile">Open Database from file</sys:String>
+    <sys:String x:Key="StrGrpCategories">CATEGORIES</sys:String>
+    <sys:String x:Key="StrGrpCommon">COMMON</sys:String>
+    <sys:String x:Key="StrSecItemLogin">Login</sys:String>
+    <sys:String x:Key="StrSecItemDoc">Document</sys:String>
+    <sys:String x:Key="StrSecItemNote">Secure Note</sys:String>
+    <sys:String x:Key="StrSecItemPwd">Password</sys:String>    
+</ResourceDictionary>

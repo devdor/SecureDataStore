@@ -1,0 +1,95 @@
+﻿<vw:AbstractBaseView x:Class="SecureDataStore.Views.AppMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:local="clr-namespace:SecureDataStore"
+        xmlns:vw="clr-namespace:SecureDataStore.Views"
+        xmlns:vm="clr-namespace:SecureDataStore.ViewModels"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        mc:Ignorable="d" 
+        Icon="../Res/app_locked.ico"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
+        Title="{Binding Header}" Height="768" Width="1024">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding AppExitCommand}" Modifiers="Alt" Key="F4"/>
+        <KeyBinding Command="{Binding OpenDbCommand}" Modifiers="Ctrl" Key="O"/>
+        <KeyBinding Command="{Binding NewDbCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
+    </Window.InputBindings>
+    <Window.Resources>
+        <DataTemplate x:Key="NavItemTemplate">
+            <DockPanel Margin="3">
+                <Image DockPanel.Dock="Left" Source="{Binding ImgSource}" Width="18" Height="18" VerticalAlignment="Center" Margin="-4,0,0,0"/>
+                <DockPanel VerticalAlignment="Center">
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding NumItems}"/>
+                    <TextBlock Text="{Binding Header}" Foreground="WhiteSmoke" Margin="14,0,0,0"/>
+                </DockPanel>
+            </DockPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItemList}"/>
+        <ToolBarPanel Orientation="Horizontal">
+            <Button Command="{Binding OpenDbCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}">
+                <DockPanel>
+                    <Image Source="../Res/baseline_folder_open_black_18dp.png"/>
+                    <TextBlock>
+                        <Run Text="{DynamicResource StrOpen}"/>
+                        <Run Text="{DynamicResource StrPunctuation}"/>
+                    </TextBlock>
+                </DockPanel>
+            </Button>
+            <Button Command="{Binding AddCategoryItemCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
+                <DockPanel>
+                    <Image Source="../Res/baseline_add_circle_outline_black_18dp.png"/>
+                    <TextBlock>
+                        <Run Text="{DynamicResource StrAdd}"/>
+                        <Run Text="{DynamicResource StrPunctuation}"/>
+                    </TextBlock>
+                </DockPanel>
+            </Button>
+        </ToolBarPanel>
+        <StatusBar x:Name="statusBarMain" DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding AppStatusMsg, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <tb:TaskbarIcon
+            IconSource="../App.ico"
+            MenuActivation="LeftOrRightClick"
+            PopupActivation="LeftOrDoubleClick"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <ListBox ItemsSource="{Binding ListSysNavView.View}" SelectedItem="{Binding SelectedNavItem}" ItemTemplate="{StaticResource NavItemTemplate}" 
+                     Background="SlateGray" SelectionMode="Single" Padding="5">
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="SemiBold" FontSize="14" Text="{Binding Name}" Foreground="Silver"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+            </ListBox>
+
+            <GridSplitter Grid.Column="1"/>
+
+            <ListBox Grid.Column="2" ItemsSource="{Binding ListLvSecItemView.View}" SelectedItem="{Binding SelectedLvSecItem}"/>
+
+            <GridSplitter Grid.Column="3"/>
+            
+            <DockPanel Grid.Column="4">
+                <ListBox ItemsSource="{Binding ListValueItem}" SelectedItem="{Binding SelectedValueItem}"/>
+            </DockPanel>
+        </Grid>
+    </DockPanel>    
+</vw:AbstractBaseView>
