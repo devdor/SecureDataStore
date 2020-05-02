@@ -1,6 +1,6 @@
 ﻿namespace SecureDataStore.ViewModels {
     public interface IPasswordViewModel {
-        string Password {
+        string Pwd {
             get;
             set;
         }

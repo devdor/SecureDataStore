@@ -12,6 +12,11 @@ namespace SecureDataStore.ViewServices {
             get;
             set;
         }
+
+        public bool InitSampleValues {
+            get;
+            set;
+        }
         #endregion
 
         public NewDatabaseResultArgs() {

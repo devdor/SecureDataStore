@@ -2,8 +2,7 @@
     public enum SecValueItemType {
         Username,
         Password,
-        Url,
-        Text,
-        MultilineText
+        Website,
+        Notice
     }
 }

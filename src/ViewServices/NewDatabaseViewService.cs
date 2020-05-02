@@ -41,14 +41,15 @@ namespace SecureDataStore.ViewServices {
 
                 var vm = wnd.DataContext as NewDatabaseViewModel;
 
-                if (!String.IsNullOrEmpty(vm.Password)
-                    && !vm.Password.Equals(vm.ConfirmPassword)) {
+                if (!String.IsNullOrEmpty(vm.Pwd)
+                    && !vm.Pwd.Equals(vm.ConfirmPassword)) {
                     e.Cancel = true;
                     return;
                 }
 
                 args.IsConfirmed = vm.IsConfirmed;
-                args.Password = vm.Password;
+                args.Password = vm.Pwd;
+                args.InitSampleValues = vm.InitSampleValues;
 
                 if (!String.IsNullOrEmpty(vm.FileName))
                     args.DbFileInfo = new FileInfo(vm.FileName);

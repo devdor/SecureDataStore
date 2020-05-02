@@ -42,7 +42,11 @@ namespace SecureDataStore.ViewModels {
         NavItemViewModel _selectedNavItem;
         public NavItemViewModel SelectedNavItem {
             get => _selectedNavItem;
-            set {                
+            set {
+
+                this.SelectedLvSecItem = null;
+                this.SelectedValueItem = null;
+                this.ListValueItem = null;
                 SetProperty(ref _selectedNavItem, value);
                 this.FilterSecureItems(value != null ? value.NavType : NavItemType.NULL);
             }
@@ -54,10 +58,10 @@ namespace SecureDataStore.ViewModels {
             set => SetProperty(ref _listLvSecItem, value);
         }
 
-        CollectionViewSource _listLvSecItemView;
-        public CollectionViewSource ListLvSecItemView {
-            get => _listLvSecItemView;
-            set => SetProperty(ref _listLvSecItemView, value);
+        CollectionViewSource _lvSecItemCollectionView;
+        public CollectionViewSource LvSecItemCollectionView {
+            get => _lvSecItemCollectionView;
+            set => SetProperty(ref _lvSecItemCollectionView, value);
         }
 
         LvSecureItemViewModel _selectedLvSecItem;
@@ -82,6 +86,35 @@ namespace SecureDataStore.ViewModels {
                 SetProperty(ref _selectedValueItem, value);
             }
         }
+
+        bool _btnSecItemEditVisible = true;
+        public bool BtnSecItemEditVisible {
+            get => _btnSecItemEditVisible;
+            set => SetProperty(ref _btnSecItemEditVisible, value);
+        }
+
+        bool _btnSecItemSaveVisible = false;
+        public bool BtnSecItemSaveVisible {
+            get => _btnSecItemSaveVisible;
+            set => SetProperty(ref _btnSecItemSaveVisible, value);
+        }
+
+        bool _btnSecItemCancelEditVisible = false;
+        public bool BtnSecItemCancelEditVisible {
+            get => _btnSecItemCancelEditVisible;
+            set => SetProperty(ref _btnSecItemCancelEditVisible, value);
+        }
+
+        CtrlMode _ctrlEditMode = CtrlMode.Display;
+        public CtrlMode CtrlEditMode {
+            get => _ctrlEditMode;
+            set {
+                this.BtnSecItemCancelEditVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemSaveVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemEditVisible = !this.BtnSecItemSaveVisible;
+                SetProperty(ref _ctrlEditMode, value);
+            }
+        }
         #endregion
 
         #region Commands
@@ -89,18 +122,31 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-
         public DelegateCommand OpenDbCommand {
             get;
             set;
         }
-
         public DelegateCommand NewDbCommand {
             get;
             set;
         }
-
+        public DelegateCommand PwdGeneratorCommand {
+            get;
+            set;
+        }
         public DelegateCommand AddCategoryItemCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemEditCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemEditSaveCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemCancelEditCommand {
             get;
             set;
         }
@@ -113,6 +159,10 @@ namespace SecureDataStore.ViewModels {
             this.OpenDbCommand = new DelegateCommand(this.RaiseOpenDb);
             this.NewDbCommand = new DelegateCommand(this.RaiseNewDb);
             this.AddCategoryItemCommand = new DelegateCommand(this.RaiseAddCategoryItem);
+            this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
+            this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
+            this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
+            this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
 
             string GetResString(string img) {
                 return $"../Res/{img}";
@@ -184,6 +234,9 @@ namespace SecureDataStore.ViewModels {
                                 }
                             }
                         },
+                        new MenuItemViewModel(Util.ReadStringRes("StrPwdGenerator", true)) {
+                            Command = this.PwdGeneratorCommand
+                        },
                         new MenuItemViewModel(Util.ReadStringRes("StrExit")) {
                             Command = this.AppExitCommand,
                             InputGestureText = Util.ReadStringRes("StrGestureAlt_F4")
@@ -202,8 +255,34 @@ namespace SecureDataStore.ViewModels {
             this.AppStatusMsg = Util.ReadStringRes("StrReady", ConstValue.STR_PUNCTUATION);
         }
 
+        void RaiseSecItemEdit() {
+            this.CtrlEditMode = CtrlMode.Edit;
+        }
+
+        void RaiseSecItemCancelEdit() {
+            this.CtrlEditMode = CtrlMode.Display;
+        }
+
+        void RaiseSecItemSave() {
+            this.CtrlEditMode = CtrlMode.Display;
+        }
+
         void RaiseAppExit() {
             Application.Current.Shutdown();
+        }
+
+        void RaisePwdGenerator() {
+            try {
+
+                new PwdCreateViewService(dlg => { 
+                }).ShowView(
+                    new PwdCreateArgs(
+                        this.Log, Util.ReadStringRes("StrPwdGenerator")));
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
         }
 
         void RaiseAddCategoryItem() {
@@ -228,7 +307,7 @@ namespace SecureDataStore.ViewModels {
                         this._db = new Database(
                             this.Log, r.DbFileInfo, r.Password);
 
-                        this._db.Init();
+                        this._db.Init(r.InitSampleValues);
                         this.LoadDatabase(NavItemType.NULL);
                     }
                 }).ShowView(
@@ -315,6 +394,8 @@ namespace SecureDataStore.ViewModels {
 
                         this.ListLvSecItem.Add(
                             new LvSecureItemViewModel(secItem.Name, secItem.Id) { 
+                                Created = secItem.Created,
+                                Updated = secItem.Updated,
                                 IsFavItem = secItem.IsFavItem, 
                                 State = secItem.State, 
                                 ItemType = (SecItemType)secItem.ItemType 
@@ -337,7 +418,7 @@ namespace SecureDataStore.ViewModels {
                 var view = new CollectionViewSource();
                 view.Source = this.ListLvSecItem;
                 view.Filter += OnSecItemFilter;
-                this.ListLvSecItemView = view;
+                this.LvSecItemCollectionView = view;
             }
             catch (Exception ex) {
 

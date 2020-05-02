@@ -4,6 +4,18 @@ using System;
 namespace SecureDataStore.ViewModels {
     public class LvSecureItemViewModel : AbstractLvItem {
         #region Fields and Properties
+        DateTime _created;
+        public DateTime Created {
+            get => _created;
+            set => SetProperty(ref _created, value);
+        }
+        
+        DateTime? _updated;
+        public DateTime? Updated {
+            get => _updated;
+            set => SetProperty(ref _updated, value);
+        }
+
         bool _isFavItem;
         public bool IsFavItem {
             get => _isFavItem;

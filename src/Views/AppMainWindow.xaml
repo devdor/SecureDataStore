@@ -12,12 +12,8 @@
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         Title="{Binding Header}" Height="768" Width="1024">
-    <Window.InputBindings>
-        <KeyBinding Command="{Binding AppExitCommand}" Modifiers="Alt" Key="F4"/>
-        <KeyBinding Command="{Binding OpenDbCommand}" Modifiers="Ctrl" Key="O"/>
-        <KeyBinding Command="{Binding NewDbCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
-    </Window.InputBindings>
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
         <DataTemplate x:Key="NavItemTemplate">
             <DockPanel Margin="3">
                 <Image DockPanel.Dock="Left" Source="{Binding ImgSource}" Width="18" Height="18" VerticalAlignment="Center" Margin="-4,0,0,0"/>
@@ -28,9 +24,17 @@
             </DockPanel>
         </DataTemplate>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding AppExitCommand}" Modifiers="Alt" Key="F4"/>
+        <KeyBinding Command="{Binding OpenDbCommand}" Modifiers="Ctrl" Key="O"/>
+        <KeyBinding Command="{Binding NewDbCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
+        <KeyBinding Command="{Binding SecItemEditCommand}" Modifiers="Ctrl" Key="E"/>
+        <KeyBinding Command="{Binding SecItemEditSaveCommand}" Modifiers="Ctrl" Key="S"/>
+        <KeyBinding Command="{Binding SecItemCancelEditCommand}" Key="Esc"/>
+    </Window.InputBindings>    
     <DockPanel>
         <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItemList}"/>
-        <ToolBarPanel Orientation="Horizontal">
+        <ToolBarPanel>
             <Button Command="{Binding OpenDbCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}">
                 <DockPanel>
                     <Image Source="../Res/baseline_folder_open_black_18dp.png"/>
@@ -83,12 +87,66 @@
 
             <GridSplitter Grid.Column="1"/>
 
-            <ListBox Grid.Column="2" ItemsSource="{Binding ListLvSecItemView.View}" SelectedItem="{Binding SelectedLvSecItem}"/>
+            <ListBox Grid.Column="2" ItemsSource="{Binding LvSecItemCollectionView.View}" SelectedItem="{Binding SelectedLvSecItem}" SelectionMode="Single"/>
 
             <GridSplitter Grid.Column="3"/>
             
             <DockPanel Grid.Column="4">
-                <ListBox ItemsSource="{Binding ListValueItem}" SelectedItem="{Binding SelectedValueItem}"/>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ToolBarPanel>
+                        <Button Command="{Binding SecItemEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemEdit}" Visibility="{Binding BtnSecItemEditVisible, Converter={StaticResource BoolToVis}}">
+                            <DockPanel>
+                                <Image Source="../Res/outline_edit_black_18dp.png"/>
+                                <TextBlock Text="{DynamicResource StrEdit}"/>
+                            </DockPanel>
+                        </Button>
+                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveVisible, Converter={StaticResource BoolToVis}}">
+                            <DockPanel>
+                                <Image Source="../Res/outline_save_black_18dp.png"/>
+                                <TextBlock Text="{DynamicResource StrSave}"/>
+                            </DockPanel>
+                        </Button>
+                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditVisible, Converter={StaticResource BoolToVis}}">
+                            <DockPanel>
+                                <Image Source="../Res/outline_cancel_black_18dp.png"/>
+                                <TextBlock Text="{DynamicResource StrCancel}"/>
+                            </DockPanel>
+                        </Button>
+                    </ToolBarPanel>
+
+                    <ToggleButton Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Margin="0,0,3,0">
+                        <Image Source="../Res/outline_grade_black_18dp.png" Width="18" Height="18"/>
+                    </ToggleButton>
+                </Grid>
+
+                <StackPanel Style="{DynamicResource CtrlListStackPanel}" DockPanel.Dock="Bottom" Margin="5">
+                    <DockPanel>
+                        <TextBlock Text="{DynamicResource StrCreated}"/>
+                        <TextBlock Text="{Binding SelectedLvSecItem.Created}"/>
+                    </DockPanel>
+                    <DockPanel Margin="0,10,0,0">
+                        <TextBlock Text="{DynamicResource StrUpdated}"/>
+                        <TextBlock Text="{Binding SelectedLvSecItem.Updated}"/>
+                    </DockPanel>
+                </StackPanel>
+
+                <Separator DockPanel.Dock="Bottom"/>
+                
+                <DockPanel Margin="5,10,5,5">
+                    <StackPanel Style="{DynamicResource CtrlListStackPanel}">
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" Value="{Binding SelectedLvSecItem.Header}"/>
+                        <Separator Margin="0,5,0,5"/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value=""/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
+                    </StackPanel>
+                    <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value=""/>
+                </DockPanel>
             </DockPanel>
         </Grid>
     </DockPanel>    

@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner" 
         WindowStyle="ToolWindow"
-        Title="{Binding Header}" Height="160" Width="360">
+        Title="{Binding Header}" Height="200" Width="360">
     <DockPanel Style="{StaticResource DlgMainPanel}">
         <StackPanel Style="{StaticResource OkCancelPanel}">
             <Button Content="{DynamicResource StrOK}" AutomationProperties.AutomationId="ButtonOk" IsDefault="True" Command="{Binding OkCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
@@ -22,6 +22,10 @@
                     <Button Content="{DynamicResource StrOpen}" Command="{Binding SelectDbCommand}" DockPanel.Dock="Right" Margin="3,0,0,0"/>
                     <TextBox Text="{Binding SafeFileName}" IsReadOnly="True"/>
                 </DockPanel>                
+            </DockPanel>
+            <DockPanel>
+                <TextBlock/>
+                <CheckBox Content="{DynamicResource StrInitDbSample}" IsChecked="{Binding InitSampleValues}"/>
             </DockPanel>
             <Separator Margin="5,3,5,8"/>
             <DockPanel>

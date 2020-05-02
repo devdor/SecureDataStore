@@ -40,7 +40,7 @@ namespace SecureDataStore {
             this._conString = new SQLiteConnectionString(dbFileInfo.FullName, false, key: password);
         }
 
-        public void Init() {
+        public void Init(bool initSampleValues) {
 
             if (this._conString == null)
                 throw new MissingFieldException("SQLiteConnectionString");
@@ -50,26 +50,30 @@ namespace SecureDataStore {
                 db.CreateTable<SecItem>();
                 db.CreateTable<SecValueItem>();
 
-                Random rnd = new Random();
-                foreach (var enumVal in Enum.GetValues(typeof(SecItemType))) {
+                if (initSampleValues) {
 
-                    for (int i = 0; i < 3; i++) {
+                    Random rnd = new Random();
+                    foreach (var enumVal in Enum.GetValues(typeof(SecItemType))) {
 
-                        var secItem = SecItem.Create((SecItemType)enumVal, $"{enumVal} DemoItem{i}");
-                        secItem.IsFavItem = rnd.Next(100) < 50 ? true : false;
-                        secItem.State = rnd.Next(100) < 20 ? 1 : 0;
+                        for (int i = 0; i < 3; i++) {
 
-                        var result = db.Insert(secItem);
-                        if (result == 1) {
+                            var secItem = SecItem.Create((SecItemType)enumVal, $"{enumVal} DemoItem{i}");
+                            secItem.IsFavItem = rnd.Next(100) < 50 ? true : false;
+                            secItem.State = rnd.Next(100) < 20 ? 1 : 0;
 
+                            var result = db.Insert(secItem);
                             if (result == 1) {
 
-                                db.Insert(SecValueItem.Create(secItem.Id, 0, SecValueItemType.Text, $"ValueItem Info"));
-                                db.Insert(SecValueItem.Create(secItem.Id, 1, SecValueItemType.Username, $"ValueItem Username"));
-                                db.Insert(SecValueItem.Create(secItem.Id, 2, SecValueItemType.Password, $"ValueItem Password"));
+                                if (result == 1) {
+                                    
+                                    db.Insert(SecValueItem.Create(secItem.Id, 0, SecValueItemType.Username, $"ValueItem Username"));
+                                    db.Insert(SecValueItem.Create(secItem.Id, 1, SecValueItemType.Password, $"ValueItem Password"));
+                                    db.Insert(SecValueItem.Create(secItem.Id, 2, SecValueItemType.Website, $"ValueItem Website"));
+                                    db.Insert(SecValueItem.Create(secItem.Id, 3, SecValueItemType.Notice, $"ValueItem Notice"));
+                                }
                             }
                         }
-                    }                    
+                    }
                 }
             }
         }
