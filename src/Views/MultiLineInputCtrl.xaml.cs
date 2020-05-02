@@ -80,8 +80,8 @@ namespace SecureDataStore.Views {
         static void CtrlModeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 
             var mode = (CtrlMode)e.NewValue;
-            ((TextInputCtrl)d).TextBlockIsVisible = mode == CtrlMode.Display ? true : false;
-            ((TextInputCtrl)d).TextBoxIsVisible = mode == CtrlMode.Display ? false : true;
+            ((MultiLineInputCtrl)d).TextBlockIsVisible = mode == CtrlMode.Display ? true : false;
+            ((MultiLineInputCtrl)d).TextBoxIsVisible = mode == CtrlMode.Display ? false : true;
         }
     }
 }

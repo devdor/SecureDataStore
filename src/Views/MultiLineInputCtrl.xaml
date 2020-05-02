@@ -10,7 +10,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>        
     </UserControl.Resources>
     <DockPanel x:Name="LayoutRoot">
-        <TextBlock Text="{Binding Label}" DockPanel.Dock="Top" Width="80" HorizontalAlignment="Left"/>
+        <TextBlock Style="{StaticResource TxtHeader}"/>
         <TextBox Text="{Binding Value}" Visibility="{Binding TextBoxIsVisible, Converter={StaticResource BoolToVis}}" AcceptsReturn="True"/>
     </DockPanel>
 </vw:BaseCtrl>

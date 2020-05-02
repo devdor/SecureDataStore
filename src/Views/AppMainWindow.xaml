@@ -65,11 +65,11 @@
             PopupActivation="LeftOrDoubleClick"/>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="5*"/>
             </Grid.ColumnDefinitions>
 
             <ListBox ItemsSource="{Binding ListSysNavView.View}" SelectedItem="{Binding SelectedNavItem}" ItemTemplate="{StaticResource NavItemTemplate}" 
@@ -137,11 +137,11 @@
 
                 <Separator DockPanel.Dock="Bottom"/>
                 
-                <DockPanel Margin="5,10,5,5">
+                <DockPanel Margin="5">
                     <StackPanel Style="{DynamicResource CtrlListStackPanel}">
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" Value="{Binding SelectedLvSecItem.Header}"/>
                         <Separator Margin="0,5,0,5"/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value="{Binding SelectedLvSecItem.Username}"/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value=""/>
                         <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
                     </StackPanel>

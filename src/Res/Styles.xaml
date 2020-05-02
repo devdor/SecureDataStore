@@ -113,4 +113,12 @@
         <Setter Property="ResizeBehavior" Value="PreviousAndNext"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
+
+    <Style x:Key="TxtHeader" TargetType="{x:Type TextBlock}">
+        <Setter Property="DockPanel.Dock" Value="Top"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Foreground" Value="Gray"/>
+        <Setter Property="Text" Value="{Binding Label}"/>
+    </Style>
+    
 </ResourceDictionary>
