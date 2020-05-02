@@ -1,16 +1,16 @@
-﻿using Prism.Commands;
+﻿using Newtonsoft.Json;
+using Prism.Commands;
 using SecureDataStore.Dto;
 using SecureDataStore.ViewServices;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
-using Newtonsoft.Json;
-using System.IO;
 
 namespace SecureDataStore.ViewModels {
     public class AppMainViewModel : AbstractLogViewModel {
@@ -45,8 +45,6 @@ namespace SecureDataStore.ViewModels {
             set {
 
                 this.SelectedLvSecItem = null;
-                this.SelectedValueItem = null;
-                this.ListValueItem = null;
                 SetProperty(ref _selectedNavItem, value);
                 this.FilterSecureItems(value != null ? value.NavType : NavItemType.NULL);
             }
@@ -67,24 +65,7 @@ namespace SecureDataStore.ViewModels {
         LvSecureItemViewModel _selectedLvSecItem;
         public LvSecureItemViewModel SelectedLvSecItem {
             get => _selectedLvSecItem;
-            set {
-                this.LoadValueItemList(value?.Id);
-                SetProperty(ref _selectedLvSecItem, value);
-            }
-        }
-
-        ObservableCollection<LvValueItemViewModel> _listValueItem;
-        public ObservableCollection<LvValueItemViewModel> ListValueItem {
-            get => _listValueItem;
-            set => SetProperty(ref _listValueItem, value);
-        }
-
-        LvValueItemViewModel _selectedValueItem;
-        public LvValueItemViewModel SelectedValueItem {
-            get => _selectedValueItem;
-            set {
-                SetProperty(ref _selectedValueItem, value);
-            }
+            set => SetProperty(ref _selectedLvSecItem, value);
         }
 
         bool _btnSecItemEditVisible = true;
@@ -169,26 +150,26 @@ namespace SecureDataStore.ViewModels {
             }
 
             this.ListSysNav = new ObservableCollection<NavItemViewModel>() {
-                new NavItemViewModel("All") { 
+                new NavItemViewModel("All") {
                     NavType = NavItemType.NULL,
-                    Group = Util.ReadStringRes("StrGrpCommon"), 
+                    Group = Util.ReadStringRes("StrGrpCommon"),
                     ImgSource = GetResString("baseline_all_inclusive_white_18dp.png")
                 },
-                new NavItemViewModel("Favorites") { 
+                new NavItemViewModel("Favorites") {
                     NavType = NavItemType.ShowFavorites,
-                    Group = Util.ReadStringRes("StrGrpCommon"), 
-                    ImgSource = GetResString("baseline_star_outline_white_18dp.png") 
+                    Group = Util.ReadStringRes("StrGrpCommon"),
+                    ImgSource = GetResString("baseline_star_outline_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemLogin")) {
                     NavType = NavItemType.Category,
                     SecItemType = SecItemType.Login,
-                    Group = Util.ReadStringRes("StrGrpCategories"), 
-                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png") 
+                    Group = Util.ReadStringRes("StrGrpCategories"),
+                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemDoc")){
                     NavType = NavItemType.Category,
                     SecItemType = SecItemType.Document,
-                    Group = Util.ReadStringRes("StrGrpCategories"), 
+                    Group = Util.ReadStringRes("StrGrpCategories"),
                     ImgSource = GetResString("baseline_mail_outline_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemNote")) {
@@ -274,7 +255,7 @@ namespace SecureDataStore.ViewModels {
         void RaisePwdGenerator() {
             try {
 
-                new PwdCreateViewService(dlg => { 
+                new PwdCreateViewService(dlg => {
                 }).ShowView(
                     new PwdCreateArgs(
                         this.Log, Util.ReadStringRes("StrPwdGenerator")));
@@ -393,12 +374,12 @@ namespace SecureDataStore.ViewModels {
                     foreach (var secItem in secItemList.OrderBy(obj => obj.Name)) {
 
                         this.ListLvSecItem.Add(
-                            new LvSecureItemViewModel(secItem.Name, secItem.Id) { 
+                            new LvSecureItemViewModel(secItem.Name, secItem.Id) {
                                 Created = secItem.Created,
                                 Updated = secItem.Updated,
-                                IsFavItem = secItem.IsFavItem, 
-                                State = secItem.State, 
-                                ItemType = (SecItemType)secItem.ItemType 
+                                IsFavItem = secItem.IsFavItem,
+                                State = secItem.State,
+                                ItemType = (SecItemType)secItem.ItemType
                             });
                     }
                 }
@@ -452,40 +433,10 @@ namespace SecureDataStore.ViewModels {
                         if (secureItem.State != 1) {
                             e.Accepted = false;
                         }
-                        break;                    
+                        break;
                 }
             }
-            
-        }
 
-        void LoadValueItemList(int? catItemId) {
-
-            try {
-
-                if (catItemId.GetValueOrDefault(0) == 0) {
-
-                    this.ListValueItem = null;
-                    return;
-                }
-
-                if (this._db == null)
-                    return;
-
-                var valueItemList = this._db.ReadListValueItem(catItemId.Value);
-                if (!DictionaryUtils.IsNullOrEmpty(valueItemList)) {
-
-                    this.ListValueItem = new ObservableCollection<LvValueItemViewModel>();
-                    foreach (var valueItem in valueItemList.OrderBy(obj => obj.Pos)) {
-
-                        this.ListValueItem.Add(
-                            new LvValueItemViewModel(((SecValueItemType)valueItem.ValueType).ToString(), valueItem.Id));
-                    }
-                }
-            }
-            catch (Exception ex) {
-
-                this.LogError(ex);
-            }
         }
 
         AppSettings ReadCurrentAppSettings() {

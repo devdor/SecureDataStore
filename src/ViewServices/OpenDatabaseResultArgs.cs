@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace SecureDataStore.ViewServices {
+﻿namespace SecureDataStore.ViewServices {
     public class OpenDatabaseResultArgs : AbstractViewResultArgs {
         #region Fields and Properties
         public string Password {

@@ -63,10 +63,22 @@
     <Compile Update="Views\NewDatabaseView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\PwdInputCtrl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MultiLineInputCtrl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <Page Update="Views\NewDatabaseView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\PwdInputCtrl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MultiLineInputCtrl.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

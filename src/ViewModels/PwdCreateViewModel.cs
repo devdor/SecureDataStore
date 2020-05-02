@@ -1,7 +1,6 @@
 ﻿using Prism.Commands;
 using Serilog.Core;
 using System;
-using System.Diagnostics;
 
 namespace SecureDataStore.ViewModels {
     public class PwdCreateViewModel : AbstractDialogViewModel, IPasswordViewModel {
@@ -44,7 +43,7 @@ namespace SecureDataStore.ViewModels {
 
         public PwdCreateViewModel(Logger logger, string header)
             : base(logger, header) {
-                        
+
             this.OkCommand = new DelegateCommand<object>(this.RaiseOk);
             this.CancelCommand = new DelegateCommand<object>(this.RaiseCancel);
 
@@ -80,15 +79,7 @@ namespace SecureDataStore.ViewModels {
 
             try {
 
-                Process clipboardExecutable = new Process();
-                clipboardExecutable.StartInfo = new ProcessStartInfo
-                {
-                    RedirectStandardInput = true,
-                    FileName = @"clip",
-                };
-                clipboardExecutable.Start();
-                clipboardExecutable.StandardInput.Write(this.Pwd);
-                clipboardExecutable.StandardInput.Close();
+                Util.CopyToClipboard(this.Pwd);
             }
             catch (Exception ex) {
 

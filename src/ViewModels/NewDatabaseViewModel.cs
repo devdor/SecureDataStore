@@ -46,7 +46,7 @@ namespace SecureDataStore.ViewModels {
 
         public NewDatabaseViewModel(Logger logger, string header)
             : base(logger, header) {
-                        
+
             this.OkCommand = new DelegateCommand<object>(this.RaiseOk);
             this.CancelCommand = new DelegateCommand<object>(this.RaiseCancel);
 

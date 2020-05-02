@@ -2,15 +2,15 @@
 
 namespace SecureDataStore.Views {
     /// <summary>
-    /// Interaktionslogik für TextInputCtrl.xaml
+    /// Interaktionslogik für MultiLineInputCtrl.xaml
     /// </summary>
-    public partial class TextInputCtrl : BaseCtrl {
+    public partial class MultiLineInputCtrl : BaseCtrl {
         #region Fields and Properties
         #region CtrlMode
         public static readonly DependencyProperty CtrlEditModeProperty = DependencyProperty.RegisterAttached(
             "CtrlEditMode",
             typeof(CtrlMode),
-            typeof(TextInputCtrl),
+            typeof(MultiLineInputCtrl),
             new PropertyMetadata(CtrlModeChangedCallback));
         public CtrlMode CtrlEditMode {
             get {
@@ -26,7 +26,7 @@ namespace SecureDataStore.Views {
         public static readonly DependencyProperty LabelProperty = DependencyProperty.RegisterAttached(
                 "Label",
                 typeof(string),
-                typeof(TextInputCtrl),
+                typeof(MultiLineInputCtrl),
                 new PropertyMetadata());
         public string Label {
             get {
@@ -42,7 +42,7 @@ namespace SecureDataStore.Views {
         public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
                 "Value",
                 typeof(string),
-                typeof(TextInputCtrl),
+                typeof(MultiLineInputCtrl),
                 new PropertyMetadata());
         public string Value {
             get {
@@ -71,7 +71,7 @@ namespace SecureDataStore.Views {
             }
         }
         #endregion
-        public TextInputCtrl() {
+        public MultiLineInputCtrl() {
 
             InitializeComponent();
             LayoutRoot.DataContext = this;

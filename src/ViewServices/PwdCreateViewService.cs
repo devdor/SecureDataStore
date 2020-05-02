@@ -2,7 +2,6 @@
 using SecureDataStore.Views;
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 
 namespace SecureDataStore.ViewServices {

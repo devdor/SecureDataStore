@@ -141,11 +141,11 @@
                     <StackPanel Style="{DynamicResource CtrlListStackPanel}">
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" Value="{Binding SelectedLvSecItem.Header}"/>
                         <Separator Margin="0,5,0,5"/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value=""/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value="{Binding SelectedLvSecItem.Username}"/>
+                        <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
                     </StackPanel>
-                    <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value=""/>
+                    <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value=""/>
                 </DockPanel>
             </DockPanel>
         </Grid>

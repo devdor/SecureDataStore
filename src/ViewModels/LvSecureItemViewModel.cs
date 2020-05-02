@@ -9,7 +9,7 @@ namespace SecureDataStore.ViewModels {
             get => _created;
             set => SetProperty(ref _created, value);
         }
-        
+
         DateTime? _updated;
         public DateTime? Updated {
             get => _updated;
@@ -27,7 +27,7 @@ namespace SecureDataStore.ViewModels {
             get => _state;
             set => SetProperty(ref _state, value);
         }
-        
+
         SecItemType _itemType;
         public SecItemType ItemType {
             get => _itemType;

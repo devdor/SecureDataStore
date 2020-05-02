@@ -4,13 +4,12 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Navigation;
 
 namespace SecureDataStore {
     public class Database {
         #region Fields and Properties
         Logger _logger;
-        
+
         SQLiteConnectionString _conString;
 
         public string DbName {
@@ -46,7 +45,7 @@ namespace SecureDataStore {
                 throw new MissingFieldException("SQLiteConnectionString");
 
             using (var db = new SQLiteConnection(this._conString)) {
-                
+
                 db.CreateTable<SecItem>();
                 db.CreateTable<SecValueItem>();
 
@@ -65,7 +64,7 @@ namespace SecureDataStore {
                             if (result == 1) {
 
                                 if (result == 1) {
-                                    
+
                                     db.Insert(SecValueItem.Create(secItem.Id, 0, SecValueItemType.Username, $"ValueItem Username"));
                                     db.Insert(SecValueItem.Create(secItem.Id, 1, SecValueItemType.Password, $"ValueItem Password"));
                                     db.Insert(SecValueItem.Create(secItem.Id, 2, SecValueItemType.Website, $"ValueItem Website"));
@@ -88,7 +87,7 @@ namespace SecureDataStore {
                 var query = db.Table<SecItem>();
                 if (query != null) {
 
-                    return navItemType == NavItemType.NULL ? 
+                    return navItemType == NavItemType.NULL ?
                         query.ToList() : query.Where(catItem => catItem.ItemType == (int)navItemType).ToList();
                 }
 

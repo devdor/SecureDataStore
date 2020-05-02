@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -133,6 +134,18 @@ namespace SecureDataStore {
                 sorted[i] = pass[pos[i]];
 
             return new String(sorted);
+        }
+
+        public static void CopyToClipboard(string value) {
+
+            Process clipboardExecutable = new Process();
+            clipboardExecutable.StartInfo = new ProcessStartInfo {
+                RedirectStandardInput = true,
+                FileName = @"clip",
+            };
+            clipboardExecutable.Start();
+            clipboardExecutable.StandardInput.Write(value);
+            clipboardExecutable.StandardInput.Close();
         }
     }
 }
