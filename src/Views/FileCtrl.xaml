@@ -1,0 +1,24 @@
+﻿<vw:BaseCtrl x:Class="SecureDataStore.Views.FileCtrl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SecureDataStore.Views"
+             xmlns:vw="clr-namespace:SecureDataStore.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="LayoutRoot">
+        <Border BorderBrush="Silver" BorderThickness="0.5" Padding="10">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="{Binding Value}"/>
+                <TextBlock Text="{DynamicResource StrClickToDownload}" Visibility="{Binding TextBlockDownloadIsVisible, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="{DynamicResource StrDragFileHere}" Visibility="{Binding TextBlockUploadIsVisible, Converter={StaticResource BoolToVis}}"/>
+            </StackPanel>
+        </Border>        
+    </Grid>
+</vw:BaseCtrl>

@@ -145,7 +145,10 @@
                         <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
                     </StackPanel>
-                    <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value=""/>
+                    <Grid>
+                        <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value="" Background="Green"/>
+                        <vw:FileCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Value="" Background="Red"/>
+                    </Grid>                    
                 </DockPanel>
             </DockPanel>
         </Grid>
