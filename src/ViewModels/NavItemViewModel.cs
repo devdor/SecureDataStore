@@ -1,5 +1,4 @@
-﻿using System;
-using SecureDataStore.Dto;
+﻿using SecureDataStore.Dto;
 
 namespace SecureDataStore.ViewModels {
     public class NavItemViewModel : AbstractHeaderedViewModel {
@@ -9,25 +8,25 @@ namespace SecureDataStore.ViewModels {
             get => _navType;
             set => SetProperty(ref _navType, value);
         }
-        
+
         int? _numItems;
         public int? NumItems {
             get => _numItems;
             set => SetProperty(ref _numItems, value);
         }
-        
+
         string _imgSource;
         public string ImgSource {
             get => _imgSource;
             set => SetProperty(ref _imgSource, value);
         }
-        
+
         string _group;
         public string Group {
             get => _group;
             set => SetProperty(ref _group, value);
         }
-        
+
         SecItemType _secItemType;
         public SecItemType SecItemType {
             get => _secItemType;

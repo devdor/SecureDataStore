@@ -1,18 +1,13 @@
 ﻿namespace SecureDataStore.ViewServices {
-    public class OpenDatabaseResultArgs : AbstractViewResultArgs {
+    public class PwdCreateResultArgs : AbstractViewResultArgs {
         #region Fields and Properties
         public string Password {
             get;
             set;
         }
-
-        public string DbFileName {
-            get;
-            set;
-        }
         #endregion
 
-        public OpenDatabaseResultArgs() {
+        public PwdCreateResultArgs() {
         }
     }
 }

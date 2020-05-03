@@ -86,7 +86,7 @@ namespace SecureDataStore {
                 else {
                     if (passwordBox.DataContext is IPasswordViewModel) {
 
-                        ((IPasswordViewModel)passwordBox.DataContext).Password = passwordBox.Password;
+                        ((IPasswordViewModel)passwordBox.DataContext).Pwd = passwordBox.Password;
                     }
                 }
             }

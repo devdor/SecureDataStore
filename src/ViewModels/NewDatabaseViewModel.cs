@@ -7,7 +7,7 @@ namespace SecureDataStore.ViewModels {
     public class NewDatabaseViewModel : AbstractDialogViewModel, IConfirmPasswordViewModel {
         #region Fields and Properties
         string _password;
-        public string Password {
+        public string Pwd {
             get => _password;
             set => SetProperty(ref _password, value);
         }
@@ -29,6 +29,12 @@ namespace SecureDataStore.ViewModels {
             get => _fileName;
             set => SetProperty(ref _fileName, value);
         }
+
+        bool _initSampleValues = true;
+        public bool InitSampleValues {
+            get => _initSampleValues;
+            set => SetProperty(ref _initSampleValues, value);
+        }
         #endregion
 
         #region Commands
@@ -41,9 +47,10 @@ namespace SecureDataStore.ViewModels {
         public NewDatabaseViewModel(Logger logger, string header)
             : base(logger, header) {
 
-            this.SelectDbCommand = new DelegateCommand(this.RaiseSelectDatabase);
             this.OkCommand = new DelegateCommand<object>(this.RaiseOk);
             this.CancelCommand = new DelegateCommand<object>(this.RaiseCancel);
+
+            this.SelectDbCommand = new DelegateCommand(this.RaiseSelectDatabase);
         }
 
         void RaiseOk(object param) {

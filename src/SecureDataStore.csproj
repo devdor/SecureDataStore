@@ -19,8 +19,12 @@
     <None Remove="Res\baseline_mail_outline_white_18dp.png" />
     <None Remove="Res\baseline_star_outline_white_18dp.png" />
     <None Remove="Res\openfolder.png" />
+    <None Remove="Res\outline_cancel_black_18dp.png" />
     <None Remove="Res\outline_delete_white_18dp.png" />
+    <None Remove="Res\outline_edit_black_18dp.png" />
+    <None Remove="Res\outline_grade_black_18dp.png" />
     <None Remove="Res\outline_insert_drive_file_white_18dp.png" />
+    <None Remove="Res\outline_save_black_18dp.png" />
     <None Remove="Res\outline_vpn_key_white_18dp.png" />
   </ItemGroup>
 
@@ -46,8 +50,12 @@
     <Resource Include="Res\baseline_folder_open_black_18dp.png" />
     <Resource Include="Res\baseline_mail_outline_white_18dp.png" />
     <Resource Include="Res\baseline_star_outline_white_18dp.png" />
+    <Resource Include="Res\outline_cancel_black_18dp.png" />
     <Resource Include="Res\outline_delete_white_18dp.png" />
+    <Resource Include="Res\outline_edit_black_18dp.png" />
+    <Resource Include="Res\outline_grade_black_18dp.png" />
     <Resource Include="Res\outline_insert_drive_file_white_18dp.png" />
+    <Resource Include="Res\outline_save_black_18dp.png" />
     <Resource Include="Res\outline_vpn_key_white_18dp.png" />
   </ItemGroup>
 
@@ -55,10 +63,22 @@
     <Compile Update="Views\NewDatabaseView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\PwdInputCtrl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MultiLineInputCtrl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <Page Update="Views\NewDatabaseView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\PwdInputCtrl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MultiLineInputCtrl.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

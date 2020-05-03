@@ -48,7 +48,7 @@ namespace SecureDataStore.ViewServices {
 
                 var vm = wnd.DataContext as OpenDatabaseViewModel;
                 args.IsConfirmed = vm.IsConfirmed;
-                args.Password = vm.Password;
+                args.Password = vm.Pwd;
                 args.DbFileName = vm.FileName;
             }
 

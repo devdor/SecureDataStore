@@ -1,16 +1,16 @@
-﻿using Prism.Commands;
+﻿using Newtonsoft.Json;
+using Prism.Commands;
 using SecureDataStore.Dto;
 using SecureDataStore.ViewServices;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
-using Newtonsoft.Json;
-using System.IO;
 
 namespace SecureDataStore.ViewModels {
     public class AppMainViewModel : AbstractLogViewModel {
@@ -42,7 +42,9 @@ namespace SecureDataStore.ViewModels {
         NavItemViewModel _selectedNavItem;
         public NavItemViewModel SelectedNavItem {
             get => _selectedNavItem;
-            set {                
+            set {
+
+                this.SelectedLvSecItem = null;
                 SetProperty(ref _selectedNavItem, value);
                 this.FilterSecureItems(value != null ? value.NavType : NavItemType.NULL);
             }
@@ -54,32 +56,44 @@ namespace SecureDataStore.ViewModels {
             set => SetProperty(ref _listLvSecItem, value);
         }
 
-        CollectionViewSource _listLvSecItemView;
-        public CollectionViewSource ListLvSecItemView {
-            get => _listLvSecItemView;
-            set => SetProperty(ref _listLvSecItemView, value);
+        CollectionViewSource _lvSecItemCollectionView;
+        public CollectionViewSource LvSecItemCollectionView {
+            get => _lvSecItemCollectionView;
+            set => SetProperty(ref _lvSecItemCollectionView, value);
         }
 
         LvSecureItemViewModel _selectedLvSecItem;
         public LvSecureItemViewModel SelectedLvSecItem {
             get => _selectedLvSecItem;
-            set {
-                this.LoadValueItemList(value?.Id);
-                SetProperty(ref _selectedLvSecItem, value);
-            }
+            set => SetProperty(ref _selectedLvSecItem, value);
         }
 
-        ObservableCollection<LvValueItemViewModel> _listValueItem;
-        public ObservableCollection<LvValueItemViewModel> ListValueItem {
-            get => _listValueItem;
-            set => SetProperty(ref _listValueItem, value);
+        bool _btnSecItemEditVisible = true;
+        public bool BtnSecItemEditVisible {
+            get => _btnSecItemEditVisible;
+            set => SetProperty(ref _btnSecItemEditVisible, value);
         }
 
-        LvValueItemViewModel _selectedValueItem;
-        public LvValueItemViewModel SelectedValueItem {
-            get => _selectedValueItem;
+        bool _btnSecItemSaveVisible = false;
+        public bool BtnSecItemSaveVisible {
+            get => _btnSecItemSaveVisible;
+            set => SetProperty(ref _btnSecItemSaveVisible, value);
+        }
+
+        bool _btnSecItemCancelEditVisible = false;
+        public bool BtnSecItemCancelEditVisible {
+            get => _btnSecItemCancelEditVisible;
+            set => SetProperty(ref _btnSecItemCancelEditVisible, value);
+        }
+
+        CtrlMode _ctrlEditMode = CtrlMode.Display;
+        public CtrlMode CtrlEditMode {
+            get => _ctrlEditMode;
             set {
-                SetProperty(ref _selectedValueItem, value);
+                this.BtnSecItemCancelEditVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemSaveVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemEditVisible = !this.BtnSecItemSaveVisible;
+                SetProperty(ref _ctrlEditMode, value);
             }
         }
         #endregion
@@ -89,18 +103,31 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-
         public DelegateCommand OpenDbCommand {
             get;
             set;
         }
-
         public DelegateCommand NewDbCommand {
             get;
             set;
         }
-
+        public DelegateCommand PwdGeneratorCommand {
+            get;
+            set;
+        }
         public DelegateCommand AddCategoryItemCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemEditCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemEditSaveCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemCancelEditCommand {
             get;
             set;
         }
@@ -113,32 +140,36 @@ namespace SecureDataStore.ViewModels {
             this.OpenDbCommand = new DelegateCommand(this.RaiseOpenDb);
             this.NewDbCommand = new DelegateCommand(this.RaiseNewDb);
             this.AddCategoryItemCommand = new DelegateCommand(this.RaiseAddCategoryItem);
+            this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
+            this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
+            this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
+            this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
 
             string GetResString(string img) {
                 return $"../Res/{img}";
             }
 
             this.ListSysNav = new ObservableCollection<NavItemViewModel>() {
-                new NavItemViewModel("All") { 
+                new NavItemViewModel("All") {
                     NavType = NavItemType.NULL,
-                    Group = Util.ReadStringRes("StrGrpCommon"), 
+                    Group = Util.ReadStringRes("StrGrpCommon"),
                     ImgSource = GetResString("baseline_all_inclusive_white_18dp.png")
                 },
-                new NavItemViewModel("Favorites") { 
+                new NavItemViewModel("Favorites") {
                     NavType = NavItemType.ShowFavorites,
-                    Group = Util.ReadStringRes("StrGrpCommon"), 
-                    ImgSource = GetResString("baseline_star_outline_white_18dp.png") 
+                    Group = Util.ReadStringRes("StrGrpCommon"),
+                    ImgSource = GetResString("baseline_star_outline_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemLogin")) {
                     NavType = NavItemType.Category,
                     SecItemType = SecItemType.Login,
-                    Group = Util.ReadStringRes("StrGrpCategories"), 
-                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png") 
+                    Group = Util.ReadStringRes("StrGrpCategories"),
+                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemDoc")){
                     NavType = NavItemType.Category,
                     SecItemType = SecItemType.Document,
-                    Group = Util.ReadStringRes("StrGrpCategories"), 
+                    Group = Util.ReadStringRes("StrGrpCategories"),
                     ImgSource = GetResString("baseline_mail_outline_white_18dp.png")
                 },
                 new NavItemViewModel(Util.ReadStringRes("StrSecItemNote")) {
@@ -184,6 +215,9 @@ namespace SecureDataStore.ViewModels {
                                 }
                             }
                         },
+                        new MenuItemViewModel(Util.ReadStringRes("StrPwdGenerator", true)) {
+                            Command = this.PwdGeneratorCommand
+                        },
                         new MenuItemViewModel(Util.ReadStringRes("StrExit")) {
                             Command = this.AppExitCommand,
                             InputGestureText = Util.ReadStringRes("StrGestureAlt_F4")
@@ -202,8 +236,34 @@ namespace SecureDataStore.ViewModels {
             this.AppStatusMsg = Util.ReadStringRes("StrReady", ConstValue.STR_PUNCTUATION);
         }
 
+        void RaiseSecItemEdit() {
+            this.CtrlEditMode = CtrlMode.Edit;
+        }
+
+        void RaiseSecItemCancelEdit() {
+            this.CtrlEditMode = CtrlMode.Display;
+        }
+
+        void RaiseSecItemSave() {
+            this.CtrlEditMode = CtrlMode.Display;
+        }
+
         void RaiseAppExit() {
             Application.Current.Shutdown();
+        }
+
+        void RaisePwdGenerator() {
+            try {
+
+                new PwdCreateViewService(dlg => {
+                }).ShowView(
+                    new PwdCreateArgs(
+                        this.Log, Util.ReadStringRes("StrPwdGenerator")));
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
         }
 
         void RaiseAddCategoryItem() {
@@ -228,7 +288,7 @@ namespace SecureDataStore.ViewModels {
                         this._db = new Database(
                             this.Log, r.DbFileInfo, r.Password);
 
-                        this._db.Init();
+                        this._db.Init(r.InitSampleValues);
                         this.LoadDatabase(NavItemType.NULL);
                     }
                 }).ShowView(
@@ -314,10 +374,12 @@ namespace SecureDataStore.ViewModels {
                     foreach (var secItem in secItemList.OrderBy(obj => obj.Name)) {
 
                         this.ListLvSecItem.Add(
-                            new LvSecureItemViewModel(secItem.Name, secItem.Id) { 
-                                IsFavItem = secItem.IsFavItem, 
-                                State = secItem.State, 
-                                ItemType = (SecItemType)secItem.ItemType 
+                            new LvSecureItemViewModel(secItem.Name, secItem.Id) {
+                                Created = secItem.Created,
+                                Updated = secItem.Updated,
+                                IsFavItem = secItem.IsFavItem,
+                                State = secItem.State,
+                                ItemType = (SecItemType)secItem.ItemType
                             });
                     }
                 }
@@ -337,7 +399,7 @@ namespace SecureDataStore.ViewModels {
                 var view = new CollectionViewSource();
                 view.Source = this.ListLvSecItem;
                 view.Filter += OnSecItemFilter;
-                this.ListLvSecItemView = view;
+                this.LvSecItemCollectionView = view;
             }
             catch (Exception ex) {
 
@@ -371,40 +433,10 @@ namespace SecureDataStore.ViewModels {
                         if (secureItem.State != 1) {
                             e.Accepted = false;
                         }
-                        break;                    
+                        break;
                 }
             }
-            
-        }
 
-        void LoadValueItemList(int? catItemId) {
-
-            try {
-
-                if (catItemId.GetValueOrDefault(0) == 0) {
-
-                    this.ListValueItem = null;
-                    return;
-                }
-
-                if (this._db == null)
-                    return;
-
-                var valueItemList = this._db.ReadListValueItem(catItemId.Value);
-                if (!DictionaryUtils.IsNullOrEmpty(valueItemList)) {
-
-                    this.ListValueItem = new ObservableCollection<LvValueItemViewModel>();
-                    foreach (var valueItem in valueItemList.OrderBy(obj => obj.Pos)) {
-
-                        this.ListValueItem.Add(
-                            new LvValueItemViewModel(((SecValueItemType)valueItem.ValueType).ToString(), valueItem.Id));
-                    }
-                }
-            }
-            catch (Exception ex) {
-
-                this.LogError(ex);
-            }
         }
 
         AppSettings ReadCurrentAppSettings() {
