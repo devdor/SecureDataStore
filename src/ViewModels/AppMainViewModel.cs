@@ -65,7 +65,41 @@ namespace SecureDataStore.ViewModels {
         LvSecureItemViewModel _selectedLvSecItem;
         public LvSecureItemViewModel SelectedLvSecItem {
             get => _selectedLvSecItem;
-            set => SetProperty(ref _selectedLvSecItem, value);
+            set {
+                if (value != null) {
+
+                    this.CtrlNameIsVisible = false;
+                    this.CtrlUsernameIsVisible = false;
+                    this.CtrlPasswordIsVisible = false;
+                    this.CtrlWebsiteIsVisible = false;
+                    this.CtrlMultilineIsVisible = false;
+                    this.CtrlFileIsVisible = false;
+                    
+                    switch (value.ItemType) {
+                        case SecItemType.Document:
+                            this.CtrlNameIsVisible = true;
+                            this.CtrlMultilineIsVisible = true;
+                            break;
+                        case SecItemType.Login:
+                            this.CtrlNameIsVisible = true;
+                            this.CtrlUsernameIsVisible = true;
+                            this.CtrlPasswordIsVisible = true;
+                            this.CtrlWebsiteIsVisible = true;
+                            this.CtrlMultilineIsVisible = true;
+                            break;
+                        case SecItemType.Password:
+                            this.CtrlNameIsVisible = true;                            
+                            this.CtrlPasswordIsVisible = true;
+                            this.CtrlWebsiteIsVisible = true;
+                            break;
+                        case SecItemType.SecureNote:
+                            this.CtrlNameIsVisible = true;
+                            this.CtrlMultilineIsVisible = true;
+                            break;
+                    }
+                }
+                SetProperty(ref _selectedLvSecItem, value);
+            }
         }
 
         bool _btnSecItemEditVisible = true;
@@ -95,6 +129,42 @@ namespace SecureDataStore.ViewModels {
                 this.BtnSecItemEditVisible = !this.BtnSecItemSaveVisible;
                 SetProperty(ref _ctrlEditMode, value);
             }
+        }
+
+        bool _ctrlNameIsVisible = false;
+        public bool CtrlNameIsVisible {
+            get => _ctrlNameIsVisible;
+            set => SetProperty(ref _ctrlNameIsVisible, value);
+        }        
+
+        bool _ctrlUsernameIsVisible = false;
+        public bool CtrlUsernameIsVisible {
+            get => _ctrlUsernameIsVisible;
+            set => SetProperty(ref _ctrlUsernameIsVisible, value);
+        }        
+
+        bool _ctrlPasswordIsVisible = false;
+        public bool CtrlPasswordIsVisible {
+            get => _ctrlPasswordIsVisible;
+            set => SetProperty(ref _ctrlPasswordIsVisible, value);
+        }        
+
+        bool _ctrlWebsiteIsVisible = false;
+        public bool CtrlWebsiteIsVisible {
+            get => _ctrlWebsiteIsVisible;
+            set => SetProperty(ref _ctrlWebsiteIsVisible, value);
+        }
+        
+        bool _ctrlMultilineIsVisible = false;
+        public bool CtrlMultilineIsVisible {
+            get => _ctrlMultilineIsVisible;
+            set => SetProperty(ref _ctrlMultilineIsVisible, value);
+        }
+        
+        bool _ctrlFileIsVisible = false;
+        public bool CtrlFileIsVisible {
+            get => _ctrlFileIsVisible;
+            set => SetProperty(ref _ctrlFileIsVisible, value);
         }
         #endregion
 

@@ -139,15 +139,26 @@
                 
                 <DockPanel Margin="5">
                     <StackPanel Style="{DynamicResource CtrlListStackPanel}">
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" Value="{Binding SelectedLvSecItem.Header}"/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" 
+                                          Visibility="{Binding CtrlNameIsVisible, Converter={StaticResource BoolToVis}}" Value="{Binding SelectedLvSecItem.Header}"/>
+                        
                         <Separator Margin="0,5,0,5"/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value=""/>
-                        <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
+                        
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}"
+                                          Visibility="{Binding CtrlUsernameIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}"
+                                         Visibility="{Binding CtrlPasswordIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}"
+                                          Visibility="{Binding CtrlWebsiteIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
                     </StackPanel>
                     <Grid>
-                        <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value="" Background="Green"/>
-                        <vw:FileCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Value="" Background="Red"/>
+                        <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}"
+                                               Visibility="{Binding CtrlMultilineIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:FileCtrl CtrlEditMode="{Binding Path=CtrlEditMode}"
+                                     Visibility="{Binding CtrlFileIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
                     </Grid>                    
                 </DockPanel>
             </DockPanel>

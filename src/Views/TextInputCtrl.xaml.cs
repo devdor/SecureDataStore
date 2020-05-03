@@ -53,20 +53,20 @@ namespace SecureDataStore.Views {
             }
         }
         #endregion
-        bool _textBlockIsVisible = true;
-        public bool TextBlockIsVisible {
-            get => _textBlockIsVisible;
+        bool _txtBlockIsVisible = true;
+        public bool TxtBlockIsVisible {
+            get => _txtBlockIsVisible;
             set {
-                _textBlockIsVisible = value;
+                _txtBlockIsVisible = value;
                 this.NotifyPropertyChanged();
             }
         }
 
-        bool _textBoxIsVisible;
-        public bool TextBoxIsVisible {
-            get => _textBoxIsVisible;
+        bool _txtBoxIsVisible;
+        public bool TxtBoxIsVisible {
+            get => _txtBoxIsVisible;
             set {
-                _textBoxIsVisible = value;
+                _txtBoxIsVisible = value;
                 this.NotifyPropertyChanged();
             }
         }
@@ -80,8 +80,8 @@ namespace SecureDataStore.Views {
         static void CtrlModeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 
             var mode = (CtrlMode)e.NewValue;
-            ((TextInputCtrl)d).TextBlockIsVisible = mode == CtrlMode.Display ? true : false;
-            ((TextInputCtrl)d).TextBoxIsVisible = mode == CtrlMode.Display ? false : true;
+            ((TextInputCtrl)d).TxtBlockIsVisible = mode == CtrlMode.Display ? true : false;
+            ((TextInputCtrl)d).TxtBoxIsVisible = mode == CtrlMode.Display ? false : true;
         }
     }
 }
