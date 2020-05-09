@@ -77,8 +77,7 @@ namespace SecureDataStore.ViewModels {
                     
                     switch (value.ItemType) {
                         case SecItemType.Document:
-                            this.CtrlNameIsVisible = true;
-                            this.CtrlMultilineIsVisible = true;
+                            this.CtrlFileIsVisible = true;
                             break;
                         case SecItemType.Login:
                             this.CtrlNameIsVisible = true;
