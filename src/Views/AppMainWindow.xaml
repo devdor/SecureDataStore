@@ -32,6 +32,7 @@
         <KeyBinding Command="{Binding SecItemEditCommand}" Modifiers="Ctrl" Key="E"/>
         <KeyBinding Command="{Binding SecItemEditSaveCommand}" Modifiers="Ctrl" Key="S"/>
         <KeyBinding Command="{Binding SecItemCancelEditCommand}" Key="Esc"/>
+        <KeyBinding Command="{Binding SecItemMoveToTrashCommand}" Modifiers="Ctrl" Key="Delete"/>
     </Window.InputBindings>    
     <DockPanel>
         <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItemList}"/>
@@ -77,7 +78,7 @@
                      Background="SlateGray" SelectionMode="Single" Padding="5">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp" >
-                        <i:InvokeCommandAction Command="{Binding MouseRightButtonUpCommand}" />
+                        <i:InvokeCommandAction Command="{Binding NavMouseRightBtnUpCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListBox.GroupStyle>
@@ -93,7 +94,13 @@
 
             <GridSplitter Grid.Column="1"/>
 
-            <ListBox Grid.Column="2" ItemsSource="{Binding LvSecItemCollectionView.View}" SelectedItem="{Binding SelectedLvSecItem}" SelectionMode="Single"/>
+            <ListBox Grid.Column="2" ItemsSource="{Binding LvSecItemCollectionView.View}" SelectedItem="{Binding SelectedLvSecItem}" SelectionMode="Single">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp" >
+                        <i:InvokeCommandAction Command="{Binding SecItemMouseRightBtnUpCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
 
             <GridSplitter Grid.Column="3"/>
             
