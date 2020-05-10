@@ -129,5 +129,30 @@ namespace SecureDataStore {
 
             return 0;
         }
+
+        public void EmptyTrash() {
+
+            if (this._conString == null)
+                throw new MissingFieldException("SQLiteConnectionString");
+
+            using (var db = new SQLiteConnection(this._conString)) {
+
+                var querySecItem = db.Table<SecItem>().Where(
+                    secItem => secItem.State == (int)DataItemState.Trash);
+
+                foreach (var secItem in querySecItem) {
+
+                    var queryValueItem = db.Table<SecValueItem>().Where(valueItem =>
+                    valueItem.RefSecItemId == secItem.Id);
+
+                    foreach (var valueItem in queryValueItem) {
+
+                        db.Delete<SecValueItem>(valueItem.Id);
+                    }
+
+                    db.Delete<SecItem>(secItem.Id);
+                }
+            }
+        }
     }
 }

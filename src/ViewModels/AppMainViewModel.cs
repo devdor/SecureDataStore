@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace SecureDataStore.ViewModels {
@@ -46,7 +47,7 @@ namespace SecureDataStore.ViewModels {
 
                 this.SelectedLvSecItem = null;
                 SetProperty(ref _selectedNavItem, value);
-                this.FilterSecureItems(value != null ? value.NavType : NavItemType.NULL);
+                this.FilterSecureItems();
             }
         }
 
@@ -200,6 +201,10 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
+        public DelegateCommand MouseRightButtonUpCommand {
+            get;
+            set;
+        }
         #endregion
 
         public AppMainViewModel(Logger logger, string viewHeader)
@@ -213,6 +218,7 @@ namespace SecureDataStore.ViewModels {
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
             this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
+            this.MouseRightButtonUpCommand = new DelegateCommand(this.RaiseMouseRightBtnUp);
 
             string GetResString(string img) {
                 return $"../Res/{img}";
@@ -253,7 +259,7 @@ namespace SecureDataStore.ViewModels {
                     Group = Util.ReadStringRes("StrGrpCategories"),
                     ImgSource = GetResString("outline_vpn_key_white_18dp.png")
                 },
-                new NavItemViewModel("Trash") {
+                new NavItemViewModel(Util.ReadStringRes("StrTrash")) {
                     NavType = NavItemType.ShowTrash,
                     ImgSource = GetResString("outline_delete_white_18dp.png") }
             };
@@ -305,6 +311,68 @@ namespace SecureDataStore.ViewModels {
             this.AppStatusMsg = Util.ReadStringRes("StrReady", ConstValue.STR_PUNCTUATION);
         }
 
+        #region Contextmenu Navitem
+        void RaiseMouseRightBtnUp() {
+            try {
+
+                if (this.SelectedNavItem == null)
+                    return;
+
+                MenuItem menItenClearTrash = new MenuItem() {
+                    Header = Util.ReadStringRes("StrEmptyTrash"),
+                    Tag = "EMPTY_TRASH"
+                };
+                menItenClearTrash.Click += ContextMenItenCClick;
+
+                ContextMenu ctxMenu = new ContextMenu();
+                switch (this.SelectedNavItem.NavType) {
+                    case NavItemType.ShowTrash:
+                        ctxMenu.Items.Add(menItenClearTrash);
+                        break;
+                }
+
+                if (ctxMenu.Items.Count > 0) {
+                    ctxMenu.IsOpen = true;
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        private void ContextMenItenCClick(object sender, RoutedEventArgs e) {
+            try {
+
+                if (this._db == null)
+                    return;
+
+                if (!(sender is MenuItem))
+                    return;
+
+                var menItem = sender as MenuItem;
+                if (menItem.Tag != null) {
+
+                    switch (menItem.Tag.ToString()) {
+
+                        case "EMPTY_TRASH":
+
+                            this._db.EmptyTrash();
+                            this.LoadDatabase();
+                            break;
+                    }
+                }
+
+                this.FilterSecureItems();
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+        #endregion
+
+        #region Common Eventhandler
         void RaiseSecItemEdit() {
             this.CtrlEditMode = CtrlMode.Edit;
         }
@@ -358,7 +426,7 @@ namespace SecureDataStore.ViewModels {
                             this.Log, r.DbFileInfo, r.Password);
 
                         this._db.Init(r.InitSampleValues);
-                        this.LoadDatabase(NavItemType.NULL);
+                        this.LoadDatabase();
                     }
                 }).ShowView(
                     new NewDatabaseArgs(
@@ -381,7 +449,7 @@ namespace SecureDataStore.ViewModels {
                         this._db = new Database(
                             this.Log, new FileInfo(r.DbFileName), r.Password);
 
-                        this.LoadDatabase(NavItemType.NULL);
+                        this.LoadDatabase();
 
                         if (!Directory.Exists(ConstValue.USER_SETTINGS_PATH))
                             Directory.CreateDirectory(ConstValue.USER_SETTINGS_PATH);
@@ -429,7 +497,12 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void LoadDatabase(NavItemType navType) {
+        void LoadDatabase() {
+
+            this.LoadDatabaseInternal(NavItemType.NULL);
+        }
+
+        void LoadDatabaseInternal(NavItemType navType) {
 
             try {
 
@@ -453,7 +526,10 @@ namespace SecureDataStore.ViewModels {
                     }
                 }
 
-                this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == NavItemType.NULL);
+                if (this.SelectedNavItem == null) {
+                    this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == NavItemType.NULL);
+                }
+                
                 this.AppStatusMsg = $"{this._db.DbName} loaded";
             }
             catch (Exception ex) {
@@ -462,7 +538,7 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void FilterSecureItems(NavItemType navType) {
+        void FilterSecureItems() {
             try {
 
                 var view = new CollectionViewSource();
@@ -522,5 +598,6 @@ namespace SecureDataStore.ViewModels {
 
             return null;
         }
+        #endregion
     }
 }

@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:SecureDataStore"
         xmlns:vw="clr-namespace:SecureDataStore.Views"
         xmlns:vm="clr-namespace:SecureDataStore.ViewModels"
@@ -74,6 +75,11 @@
 
             <ListBox ItemsSource="{Binding ListSysNavView.View}" SelectedItem="{Binding SelectedNavItem}" ItemTemplate="{StaticResource NavItemTemplate}" 
                      Background="SlateGray" SelectionMode="Single" Padding="5">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp" >
+                        <i:InvokeCommandAction Command="{Binding MouseRightButtonUpCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>

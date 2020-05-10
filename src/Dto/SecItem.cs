@@ -17,11 +17,6 @@ namespace SecureDataStore.Dto {
             get;
             set;
         }
-
-        public bool IsInTrash {
-            get;
-            set;
-        }
         #endregion
         public static SecItem Create(SecItemType itemType, string name) {
             if (String.IsNullOrEmpty(name))
