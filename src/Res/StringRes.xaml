@@ -17,7 +17,6 @@
     <sys:String x:Key="StrNew">New</sys:String>
     <sys:String x:Key="StrDatabase">Database</sys:String>
     <sys:String x:Key="StrPassword">Password</sys:String>
-    <sys:String x:Key="StrGestureCtrl_Shift_N">Ctrl+SHIFT+N</sys:String>
     <sys:String x:Key="StrGestureCtrl_O">Ctrl+O</sys:String>
     <sys:String x:Key="StrGestureAlt_F4">Alt+F4</sys:String>
     <sys:String x:Key="StrAdd">Add</sys:String>
@@ -40,14 +39,19 @@
     <sys:String x:Key="StrTrash">Trash</sys:String>
     <sys:String x:Key="StrEmptyTrash">Empty Trash</sys:String>
     <sys:String x:Key="StrMoveToTrash">Move to trash</sys:String>
+    <sys:String x:Key="StrRestoreFromTrash">Restore from trash</sys:String>
     <sys:String x:Key="StrPwdLength">Password Length</sys:String>
     <sys:String x:Key="StrNonAlphaNumChars">Non-Alphanumeric Characters</sys:String>
     <sys:String x:Key="StrPwdGenerator">Password Generator</sys:String>
     <sys:String x:Key="StrClickToDownload">Click to Download</sys:String>
-    <sys:String x:Key="StrDragFileHere">Drag file here to upload</sys:String>    
-    
-    <sys:String x:Key="StrToolTipAddSecItem">Add new Secure item</sys:String>
+    <sys:String x:Key="StrDragFileHere">Drag file here to upload</sys:String>
+    <sys:String x:Key="StrAll">All</sys:String>
+    <sys:String x:Key="StrFavorites">Favorites</sys:String>
+    <sys:String x:Key="StrClose">Close</sys:String>
+
+    <sys:String x:Key="StrToolTipAddSecItem">Add new Secure item (Ctrl+SHIFT+N)</sys:String>
     <sys:String x:Key="StrToolTipOpenDatabaseFile">Open Database from file</sys:String>
+    <sys:String x:Key="StrToolTipCloseDatabase">Close Database</sys:String>
     <sys:String x:Key="StrToolTipSecItemEdit">Edit (Ctrl+E)</sys:String>
     <sys:String x:Key="StrToolTipSecItemSave">Save (Ctrl+S)</sys:String>
     <sys:String x:Key="StrToolTipSecItemCancel">Cancel (Esc)</sys:String>

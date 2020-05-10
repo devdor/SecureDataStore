@@ -102,31 +102,31 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        bool _btnSecItemEditVisible = true;
-        public bool BtnSecItemEditVisible {
-            get => _btnSecItemEditVisible;
-            set => SetProperty(ref _btnSecItemEditVisible, value);
+        bool _btnSecItemEditIsVisible = true;
+        public bool BtnSecItemEditIsVisible {
+            get => _btnSecItemEditIsVisible;
+            set => SetProperty(ref _btnSecItemEditIsVisible, value);
         }
 
-        bool _btnSecItemSaveVisible = false;
-        public bool BtnSecItemSaveVisible {
-            get => _btnSecItemSaveVisible;
-            set => SetProperty(ref _btnSecItemSaveVisible, value);
+        bool _btnSecItemSaveIsVisible = false;
+        public bool BtnSecItemSaveIsVisible {
+            get => _btnSecItemSaveIsVisible;
+            set => SetProperty(ref _btnSecItemSaveIsVisible, value);
         }
 
-        bool _btnSecItemCancelEditVisible = false;
-        public bool BtnSecItemCancelEditVisible {
-            get => _btnSecItemCancelEditVisible;
-            set => SetProperty(ref _btnSecItemCancelEditVisible, value);
+        bool _btnSecItemCancelEditIsVisible = false;
+        public bool BtnSecItemCancelEditIsVisible {
+            get => _btnSecItemCancelEditIsVisible;
+            set => SetProperty(ref _btnSecItemCancelEditIsVisible, value);
         }
 
         CtrlMode _ctrlEditMode = CtrlMode.Display;
         public CtrlMode CtrlEditMode {
             get => _ctrlEditMode;
             set {
-                this.BtnSecItemCancelEditVisible = value == CtrlMode.Edit ? true : false;
-                this.BtnSecItemSaveVisible = value == CtrlMode.Edit ? true : false;
-                this.BtnSecItemEditVisible = !this.BtnSecItemSaveVisible;
+                this.BtnSecItemCancelEditIsVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemSaveIsVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemEditIsVisible = !this.BtnSecItemSaveIsVisible;
                 SetProperty(ref _ctrlEditMode, value);
             }
         }
@@ -166,6 +166,24 @@ namespace SecureDataStore.ViewModels {
             get => _ctrlFileIsVisible;
             set => SetProperty(ref _ctrlFileIsVisible, value);
         }
+
+        bool _ctrlSecItemCreateIsEnabled = false;
+        public bool CtrlSecItemCreateIsEnabled {
+            get => _ctrlSecItemCreateIsEnabled;
+            set => SetProperty(ref _ctrlSecItemCreateIsEnabled, value);
+        }
+
+        bool _btnDbOpenIsVisible = true;
+        public bool BtnDbOpenIsVisible {
+            get => _btnDbOpenIsVisible;
+            set => SetProperty(ref _btnDbOpenIsVisible, value);
+        }
+
+        bool _btnDbCloseIsVisible = false;
+        public bool BtnDbCloseIsVisible {
+            get => _btnDbCloseIsVisible;
+            set => SetProperty(ref _btnDbCloseIsVisible, value);
+        }
         #endregion
 
         #region Commands
@@ -173,11 +191,15 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-        public DelegateCommand OpenDbCommand {
+        public DelegateCommand DbOpenCommand {
             get;
             set;
         }
-        public DelegateCommand NewDbCommand {
+        public DelegateCommand DbCloseCommand {
+            get;
+            set;
+        }
+        public DelegateCommand DbCreateCommand {
             get;
             set;
         }
@@ -185,7 +207,11 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-        public DelegateCommand AddCategoryItemCommand {
+        public DelegateCommand SecItemCreateCommand {
+            get;
+            set;
+        }
+        public DelegateCommand NavMouseRightBtnUpCommand {
             get;
             set;
         }
@@ -201,7 +227,11 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-        public DelegateCommand MouseRightButtonUpCommand {
+        public DelegateCommand SecItemMoveToTrashCommand {
+            get;
+            set;
+        }
+        public DelegateCommand SecItemMouseRightBtnUpCommand {
             get;
             set;
         }
@@ -211,57 +241,36 @@ namespace SecureDataStore.ViewModels {
             : base(logger, viewHeader) {
 
             this.AppExitCommand = new DelegateCommand(this.RaiseAppExit);
-            this.OpenDbCommand = new DelegateCommand(this.RaiseOpenDb);
-            this.NewDbCommand = new DelegateCommand(this.RaiseNewDb);
-            this.AddCategoryItemCommand = new DelegateCommand(this.RaiseAddCategoryItem);
+            this.DbOpenCommand = new DelegateCommand(this.RaiseDbOpen);
+            this.DbCloseCommand = new DelegateCommand(this.RaiseDbClose);
+            this.DbCreateCommand = new DelegateCommand(this.RaiseDbCreate);
+            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => CtrlSecItemCreateIsEnabled);            ;
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
+            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SelectedSecItemUpdateState);
             this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
-            this.MouseRightButtonUpCommand = new DelegateCommand(this.RaiseMouseRightBtnUp);
-
-            string GetResString(string img) {
-                return $"../Res/{img}";
-            }
+            this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
+            this.SecItemMouseRightBtnUpCommand = new DelegateCommand(this.RaiseSecItemMouseRightBtnUp);
 
             this.ListSysNav = new ObservableCollection<NavItemViewModel>() {
-                new NavItemViewModel("All") {
+                new NavItemViewModel(Util.ReadStringRes("StrAll")) {
                     NavType = NavItemType.NULL,
                     Group = Util.ReadStringRes("StrGrpCommon"),
-                    ImgSource = GetResString("baseline_all_inclusive_white_18dp.png")
+                    ImgSource = Util.GetResPath("baseline_all_inclusive_white_18dp.png")
                 },
-                new NavItemViewModel("Favorites") {
+                new NavItemViewModel(Util.ReadStringRes("StrFavorites")) {
                     NavType = NavItemType.ShowFavorites,
                     Group = Util.ReadStringRes("StrGrpCommon"),
-                    ImgSource = GetResString("baseline_star_outline_white_18dp.png")
+                    ImgSource = Util.GetResPath("baseline_star_outline_white_18dp.png")
                 },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemLogin")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Login,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemDoc")){
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Document,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("baseline_mail_outline_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemNote")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.SecureNote,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("outline_insert_drive_file_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemPwd")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Password,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("outline_vpn_key_white_18dp.png")
-                },
+                NavItemViewModel.Create(SecItemType.Login),
+                NavItemViewModel.Create(SecItemType.Document),
+                NavItemViewModel.Create(SecItemType.SecureNote),
+                NavItemViewModel.Create(SecItemType.Password),
                 new NavItemViewModel(Util.ReadStringRes("StrTrash")) {
                     NavType = NavItemType.ShowTrash,
-                    ImgSource = GetResString("outline_delete_white_18dp.png") }
+                    ImgSource = Util.GetResPath("outline_delete_white_18dp.png") }
             };
 
             var view = new CollectionViewSource();
@@ -276,8 +285,7 @@ namespace SecureDataStore.ViewModels {
                         new MenuItemViewModel(Util.ReadStringRes("StrNew")) {
                           MenuItemList = new List<MenuItemViewModel>() {
                               new MenuItemViewModel(Util.ReadStringRes("StrDatabase", true)) {
-                                  Command = this.NewDbCommand,
-                                  InputGestureText = Util.ReadStringRes("StrGestureCtrl_Shift_N")
+                                  Command = this.DbCreateCommand
                               }
                           }
                         },
@@ -285,7 +293,7 @@ namespace SecureDataStore.ViewModels {
                         new MenuItemViewModel(Util.ReadStringRes("StrOpen")) {
                             MenuItemList = new List<MenuItemViewModel>() {
                                 new MenuItemViewModel(Util.ReadStringRes("StrDatabase", true)) {
-                                    Command = this.OpenDbCommand,
+                                    Command = this.DbOpenCommand,
                                     InputGestureText = Util.ReadStringRes("StrGestureCtrl_O")
                                 }
                             }
@@ -311,27 +319,39 @@ namespace SecureDataStore.ViewModels {
             this.AppStatusMsg = Util.ReadStringRes("StrReady", ConstValue.STR_PUNCTUATION);
         }
 
-        #region Contextmenu Navitem
-        void RaiseMouseRightBtnUp() {
+        #region Contextmenu SecItem
+        void RaiseSecItemMouseRightBtnUp() {
             try {
 
-                if (this.SelectedNavItem == null)
+                if (this.SelectedLvSecItem == null)
                     return;
 
-                MenuItem menItenClearTrash = new MenuItem() {
-                    Header = Util.ReadStringRes("StrEmptyTrash"),
-                    Tag = "EMPTY_TRASH"
+                MenuItem menItemMoveToTrash = new MenuItem() {
+                    Header = Util.ReadStringRes("StrMoveToTrash"),
+                    Tag = "MOVE_TO_TRASH"
                 };
-                menItenClearTrash.Click += ContextMenItenCClick;
+
+                MenuItem menItemRestoreFromTrash = new MenuItem() {
+                    Header = Util.ReadStringRes("StrRestoreFromTrash"),
+                    Tag = "RESTORE_FROM_TRASH"
+                };
 
                 ContextMenu ctxMenu = new ContextMenu();
-                switch (this.SelectedNavItem.NavType) {
-                    case NavItemType.ShowTrash:
-                        ctxMenu.Items.Add(menItenClearTrash);
+                switch ((DataItemState)this.SelectedLvSecItem.State) {
+                    case DataItemState.Trash:
+                        ctxMenu.Items.Add(menItemRestoreFromTrash);
+                        break;
+                    case DataItemState.Default:
+                        ctxMenu.Items.Add(menItemMoveToTrash);
                         break;
                 }
 
                 if (ctxMenu.Items.Count > 0) {
+
+                    foreach (MenuItem menItem in ctxMenu.Items) {
+                        menItem.Click += ContextMenSecItenCClick;
+                    }
+
                     ctxMenu.IsOpen = true;
                 }
             }
@@ -341,7 +361,73 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        private void ContextMenItenCClick(object sender, RoutedEventArgs e) {
+        void ContextMenSecItenCClick(object sender, RoutedEventArgs e) {
+            try {
+
+                if (this._db == null)
+                    return;
+
+                if (!(sender is MenuItem))
+                    return;
+
+                var menItem = sender as MenuItem;
+                if (menItem.Tag != null) {
+
+                    switch (menItem.Tag.ToString()) {
+
+                        case "MOVE_TO_TRASH":
+                        case "RESTORE_FROM_TRASH":
+
+                            this.SelectedSecItemUpdateState();
+                            this.LoadDatabase();
+                            break;
+                    }
+                }
+                
+                this.FilterSecureItems();
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+        #endregion
+
+        #region Contextmenu NavItem
+        void RaiseNavMouseRightBtnUp() {
+            try {
+
+                if (this.SelectedNavItem == null)
+                    return;
+
+                MenuItem menItenClearTrash = new MenuItem() {
+                    Header = Util.ReadStringRes("StrEmptyTrash"),
+                    Tag = "EMPTY_TRASH"
+                };
+
+                ContextMenu ctxMenu = new ContextMenu();
+                switch (this.SelectedNavItem.NavType) {
+                    case NavItemType.ShowTrash:
+                        ctxMenu.Items.Add(menItenClearTrash);
+                        break;
+                }
+
+                if (ctxMenu.Items.Count > 0) {
+
+                    foreach (MenuItem menItem in ctxMenu.Items) {
+                        menItem.Click += ContextMenNavItenCClick;
+                    }
+
+                    ctxMenu.IsOpen = true;
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        void ContextMenNavItenCClick(object sender, RoutedEventArgs e) {
             try {
 
                 if (this._db == null)
@@ -389,6 +475,84 @@ namespace SecureDataStore.ViewModels {
             Application.Current.Shutdown();
         }
 
+        void RaiseSecItemCreate() {
+            try {
+
+                ContextMenu ctxMenu = new ContextMenu();
+                foreach (SecItemType secType in Enum.GetValues(typeof(SecItemType))) {
+
+                    var navItem = this.ListSysNav.FirstOrDefault(
+                        navItem => navItem.SecItemType == secType && navItem.NavType == NavItemType.Category);
+
+                    if (navItem != null) {
+
+                        var menItem = new MenuItem() {
+                            Header = navItem.Header,
+                            Tag = navItem.SecItemType
+                        };
+
+                        menItem.Click += OnSecItemCreateClick;
+                        ctxMenu.Items.Add(menItem);
+                    }
+                }
+
+                ctxMenu.IsOpen = true;
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        private void OnSecItemCreateClick(object sender, RoutedEventArgs e) {
+
+            try {
+
+                if (this._db == null
+                    || !(sender is MenuItem))
+                    return;
+
+                var menItem = sender as MenuItem;
+                if (menItem.Tag != null
+                    && menItem.Tag  is SecItemType) {
+
+                    var id = this._db.Create(
+                        SecItem.Create((SecItemType)menItem.Tag));
+
+                    if (id > 0) {
+
+                        this.LoadDatabase();
+                    }                    
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        bool CanRaiseSecItemCreate() {
+
+            return this._ctrlSecItemCreateIsEnabled;
+        }
+
+        void SelectedSecItemUpdateState() {
+
+            try {
+
+                if (this._db == null
+                    || this.SelectedLvSecItem == null)
+                    return;
+
+                this._db.UpdateItemState(this.SelectedLvSecItem.Id, 
+                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default );
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
         void RaisePwdGenerator() {
             try {
 
@@ -403,19 +567,7 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void RaiseAddCategoryItem() {
-            try {
-
-                if (this._db == null)
-                    return;
-            }
-            catch (Exception ex) {
-
-                this.LogError(ex);
-            }
-        }
-
-        void RaiseNewDb() {
+        void RaiseDbCreate() {
             try {
 
                 new NewDatabaseViewService(r => {
@@ -438,7 +590,25 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void RaiseOpenDb() {
+        void RaiseDbClose() {
+            try {
+
+                this.LvSecItemCollectionView = null;
+                this.ListLvSecItem = null;
+                this.SelectedLvSecItem = null; 
+                this._db = null;
+
+                this.CtrlSecItemCreateIsEnabled = false;
+                this.BtnDbCloseIsVisible = false;
+                this.BtnDbOpenIsVisible = true;
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        void RaiseDbOpen() {
             try {
 
                 var appSettings = this.ReadCurrentAppSettings();
@@ -450,6 +620,8 @@ namespace SecureDataStore.ViewModels {
                             this.Log, new FileInfo(r.DbFileName), r.Password);
 
                         this.LoadDatabase();
+                        this.BtnDbOpenIsVisible = false;
+                        this.BtnDbCloseIsVisible = true;
 
                         if (!Directory.Exists(ConstValue.USER_SETTINGS_PATH))
                             Directory.CreateDirectory(ConstValue.USER_SETTINGS_PATH);
@@ -509,28 +681,32 @@ namespace SecureDataStore.ViewModels {
                 if (this._db == null)
                     return;
 
-                var secItemList = this._db.ReadListSecItem(navType);
+                var prevNavItemType = this.SelectedNavItem != null ? this.SelectedNavItem.NavType : NavItemType.NULL;
+                var secItemList = this._db.SecItemReadList(navType);
+
                 if (!DictionaryUtils.IsNullOrEmpty(secItemList)) {
 
-                    this.ListLvSecItem = new ObservableCollection<LvSecureItemViewModel>();
-                    foreach (var secItem in secItemList.OrderBy(obj => obj.Name)) {
+                    var tmpList = new List<LvSecureItemViewModel>();
+                    foreach (var secItem in secItemList) {
 
-                        this.ListLvSecItem.Add(
+                        tmpList.Add(
                             new LvSecureItemViewModel(secItem.Name, secItem.Id) {
-                                Created = secItem.Created,
-                                Updated = secItem.Updated,
+                                Created = secItem.Created.ToLocalTime(),
+                                Updated = secItem.Updated?.ToLocalTime(),
                                 IsFavItem = secItem.IsFavItem,
                                 State = secItem.State,
                                 ItemType = (SecItemType)secItem.ItemType
                             });
                     }
+
+                    this.ListLvSecItem = new ObservableCollection<LvSecureItemViewModel>(
+                        tmpList.OrderBy(obj => obj.Header));
                 }
 
-                if (this.SelectedNavItem == null) {
-                    this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == NavItemType.NULL);
-                }
-                
+
+                this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == prevNavItemType);
                 this.AppStatusMsg = $"{this._db.DbName} loaded";
+                this.CtrlSecItemCreateIsEnabled = true;
             }
             catch (Exception ex) {
 

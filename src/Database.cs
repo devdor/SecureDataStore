@@ -77,7 +77,27 @@ namespace SecureDataStore {
             }
         }
 
-        public IEnumerable<SecItem> ReadListSecItem(NavItemType navItemType) {
+        public void UpdateItemState(int id, DataItemState state) {
+
+            if (this._conString == null)
+                throw new MissingFieldException("SQLiteConnectionString");
+
+            using (var db = new SQLiteConnection(this._conString)) {
+
+                var querySecItem = db.Table<SecItem>().Where(
+                    secItem => secItem.Id == id);
+
+                foreach (var secItem in querySecItem) {
+
+                    secItem.State = (int)state;
+                    secItem.Updated = DateTime.UtcNow;
+
+                    db.Update(secItem);
+                }
+            }
+        }
+
+        public IEnumerable<SecItem> SecItemReadList(NavItemType navItemType) {
 
             if (this._conString == null)
                 throw new MissingFieldException("SQLiteConnectionString");
@@ -95,7 +115,7 @@ namespace SecureDataStore {
             }
         }
 
-        public IEnumerable<SecValueItem> ReadListValueItem(int secItemId) {
+        public IEnumerable<SecValueItem> ValueItemReadList(int secItemId) {
 
             if (this._conString == null)
                 throw new MissingFieldException("SQLiteConnectionString");

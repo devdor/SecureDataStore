@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SecureDataStore.Dto;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -146,6 +147,10 @@ namespace SecureDataStore {
             clipboardExecutable.Start();
             clipboardExecutable.StandardInput.Write(value);
             clipboardExecutable.StandardInput.Close();
+        }
+
+        public static string GetResPath(string img) {
+            return $"../Res/{img}";
         }
     }
 }

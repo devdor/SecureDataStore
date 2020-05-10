@@ -27,16 +27,17 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Command="{Binding AppExitCommand}" Modifiers="Alt" Key="F4"/>
-        <KeyBinding Command="{Binding OpenDbCommand}" Modifiers="Ctrl" Key="O"/>
-        <KeyBinding Command="{Binding NewDbCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
+        <KeyBinding Command="{Binding DbOpenCommand}" Modifiers="Ctrl" Key="O"/>
+        <KeyBinding Command="{Binding SecItemCreateCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
         <KeyBinding Command="{Binding SecItemEditCommand}" Modifiers="Ctrl" Key="E"/>
         <KeyBinding Command="{Binding SecItemEditSaveCommand}" Modifiers="Ctrl" Key="S"/>
         <KeyBinding Command="{Binding SecItemCancelEditCommand}" Key="Esc"/>
+        <KeyBinding Command="{Binding SecItemMoveToTrashCommand}" Modifiers="Ctrl" Key="Delete"/>
     </Window.InputBindings>    
     <DockPanel>
         <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItemList}"/>
         <ToolBarPanel>
-            <Button Command="{Binding OpenDbCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}">
+            <Button Command="{Binding DbOpenCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}" Visibility="{Binding BtnDbOpenIsVisible, Converter={StaticResource BoolToVis}}">
                 <DockPanel>
                     <Image Source="../Res/baseline_folder_open_black_18dp.png"/>
                     <TextBlock>
@@ -45,7 +46,13 @@
                     </TextBlock>
                 </DockPanel>
             </Button>
-            <Button Command="{Binding AddCategoryItemCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
+            <Button Command="{Binding DbCloseCommand}" ToolTip="{DynamicResource StrToolTipCloseDatabase}" Visibility="{Binding BtnDbCloseIsVisible, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <Image Source="../Res/baseline_close_black_18dp.png"/>
+                    <TextBlock Text="{DynamicResource StrClose}"/>
+                </DockPanel>
+            </Button>
+            <Button Command="{Binding SecItemCreateCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
                 <DockPanel>
                     <Image Source="../Res/baseline_add_circle_outline_black_18dp.png"/>
                     <TextBlock>
@@ -77,7 +84,7 @@
                      Background="SlateGray" SelectionMode="Single" Padding="5">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseRightButtonUp" >
-                        <i:InvokeCommandAction Command="{Binding MouseRightButtonUpCommand}" />
+                        <i:InvokeCommandAction Command="{Binding NavMouseRightBtnUpCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListBox.GroupStyle>
@@ -93,7 +100,13 @@
 
             <GridSplitter Grid.Column="1"/>
 
-            <ListBox Grid.Column="2" ItemsSource="{Binding LvSecItemCollectionView.View}" SelectedItem="{Binding SelectedLvSecItem}" SelectionMode="Single"/>
+            <ListBox Grid.Column="2" ItemsSource="{Binding LvSecItemCollectionView.View}" SelectedItem="{Binding SelectedLvSecItem}" SelectionMode="Single">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp" >
+                        <i:InvokeCommandAction Command="{Binding SecItemMouseRightBtnUpCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
 
             <GridSplitter Grid.Column="3"/>
             
@@ -105,19 +118,19 @@
                     </Grid.ColumnDefinitions>
 
                     <ToolBarPanel>
-                        <Button Command="{Binding SecItemEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemEdit}" Visibility="{Binding BtnSecItemEditVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemEdit}" Visibility="{Binding BtnSecItemEditIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_edit_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrEdit}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_save_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrSave}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_cancel_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrCancel}"/>

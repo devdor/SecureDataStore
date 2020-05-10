@@ -18,10 +18,8 @@ namespace SecureDataStore.Dto {
             set;
         }
         #endregion
-        public static SecItem Create(SecItemType itemType, string name) {
-            if (String.IsNullOrEmpty(name))
-                throw new ArgumentNullException("Name");
-
+        public static SecItem Create(SecItemType itemType, string name = null) {
+            
             return new SecItem() {
                 State = (int)DataItemState.Default,
                 Created = DateTime.UtcNow,
