@@ -22,8 +22,8 @@ namespace SecureDataStore.ViewModels {
             set => SetProperty(ref _isFavItem, value);
         }
 
-        int _state;
-        public int State {
+        DataItemState _state;
+        public DataItemState State {
             get => _state;
             set => SetProperty(ref _state, value);
         }
@@ -36,6 +36,27 @@ namespace SecureDataStore.ViewModels {
         #endregion
         public LvSecureItemViewModel(string header, int id)
             : base(header, id) {
+        }
+
+        public static LvSecureItemViewModel Create(SecItem secItem) {
+
+            return new LvSecureItemViewModel(secItem.Name, secItem.Id) {
+                Created = secItem.Created.ToLocalTime(),
+                Updated = secItem.Updated?.ToLocalTime(),
+                IsFavItem = secItem.IsFavItem,
+                State = (DataItemState)secItem.State,
+                ItemType = (SecItemType)secItem.ItemType
+            };
+        }
+
+        public void Update(SecItem secItem) {
+
+            this.Created = secItem.Created;
+            this.Header = secItem.Name;
+            this.IsFavItem = secItem.IsFavItem;
+            this.ItemType = (SecItemType)secItem.ItemType;
+            this.State = (DataItemState)secItem.State;
+            this.Updated = secItem.Updated;
         }
 
         public override string ToString() {

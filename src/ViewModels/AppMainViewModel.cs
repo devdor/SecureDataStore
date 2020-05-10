@@ -75,7 +75,7 @@ namespace SecureDataStore.ViewModels {
                     this.CtrlWebsiteIsVisible = false;
                     this.CtrlMultilineIsVisible = false;
                     this.CtrlFileIsVisible = false;
-                    
+
                     switch (value.ItemType) {
                         case SecItemType.Document:
                             this.CtrlFileIsVisible = true;
@@ -88,7 +88,7 @@ namespace SecureDataStore.ViewModels {
                             this.CtrlMultilineIsVisible = true;
                             break;
                         case SecItemType.Password:
-                            this.CtrlNameIsVisible = true;                            
+                            this.CtrlNameIsVisible = true;
                             this.CtrlPasswordIsVisible = true;
                             this.CtrlWebsiteIsVisible = true;
                             break;
@@ -97,7 +97,20 @@ namespace SecureDataStore.ViewModels {
                             this.CtrlMultilineIsVisible = true;
                             break;
                     }
+
+                    this.SecItemCreated = value.Created;
+                    this.SecItemHeader = value.Header;
+                    this.SecItemIsFavItem = value.IsFavItem;
+                    this.SecItemUpdated = value.Updated;
                 }
+                else {
+
+                    this.SecItemCreated = null;
+                    this.SecItemHeader = null;
+                    this.SecItemIsFavItem = false;
+                    this.SecItemUpdated = null;
+                }
+
                 SetProperty(ref _selectedLvSecItem, value);
             }
         }
@@ -184,6 +197,48 @@ namespace SecureDataStore.ViewModels {
             get => _btnDbCloseIsVisible;
             set => SetProperty(ref _btnDbCloseIsVisible, value);
         }
+
+        bool _favIconDefaultIsVisible = true;
+        public bool FavIconDefaultIsVisible {
+            get => _favIconDefaultIsVisible;
+            set => SetProperty(ref _favIconDefaultIsVisible, value);
+        }
+
+        bool _favIconActiveIsVisible = false;
+        public bool FavIconActiveIsVisible {
+            get => _favIconActiveIsVisible;
+            set => SetProperty(ref _favIconActiveIsVisible, value);
+        }
+
+        #region SecureItem
+        bool _secItemIsFavItem;
+        public bool SecItemIsFavItem {
+            get => _secItemIsFavItem;
+            set {
+                this.FavIconActiveIsVisible = value;
+                this.FavIconDefaultIsVisible = !value;
+                SetProperty(ref _secItemIsFavItem, value);
+            }
+        }
+        
+        DateTime? _secItemCreated;
+        public DateTime? SecItemCreated {
+            get => _secItemCreated;
+            set => SetProperty(ref _secItemCreated, value);
+        }
+        
+        DateTime? _secItemUpdated;
+        public DateTime? SecItemUpdated {
+            get => _secItemUpdated;
+            set => SetProperty(ref _secItemUpdated, value);
+        }
+        
+        string _secItemHeader;
+        public string SecItemHeader {
+            get => _secItemHeader;
+            set => SetProperty(ref _secItemHeader, value);
+        }
+        #endregion
         #endregion
 
         #region Commands
@@ -235,6 +290,11 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
+
+        public DelegateCommand SecItemFavItemCommand {
+            get;
+            set;
+        }
         #endregion
 
         public AppMainViewModel(Logger logger, string viewHeader)
@@ -244,15 +304,16 @@ namespace SecureDataStore.ViewModels {
             this.DbOpenCommand = new DelegateCommand(this.RaiseDbOpen);
             this.DbCloseCommand = new DelegateCommand(this.RaiseDbClose);
             this.DbCreateCommand = new DelegateCommand(this.RaiseDbCreate);
-            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => CtrlSecItemCreateIsEnabled);            ;
+            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => CtrlSecItemCreateIsEnabled);
+            this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
+            this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
-            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SelectedSecItemUpdateState);
-            this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
-            this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
+            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SecItemUpdateState);
             this.SecItemMouseRightBtnUpCommand = new DelegateCommand(this.RaiseSecItemMouseRightBtnUp);
-
+            this.SecItemFavItemCommand = new DelegateCommand(this.RaiseUpdateFavItem);
+                        
             this.ListSysNav = new ObservableCollection<NavItemViewModel>() {
                 new NavItemViewModel(Util.ReadStringRes("StrAll")) {
                     NavType = NavItemType.NULL,
@@ -378,7 +439,7 @@ namespace SecureDataStore.ViewModels {
                         case "MOVE_TO_TRASH":
                         case "RESTORE_FROM_TRASH":
 
-                            this.SelectedSecItemUpdateState();
+                            this.SecItemUpdateState();
                             this.LoadDatabase();
                             break;
                     }
@@ -536,7 +597,7 @@ namespace SecureDataStore.ViewModels {
             return this._ctrlSecItemCreateIsEnabled;
         }
 
-        void SelectedSecItemUpdateState() {
+        void RaiseUpdateFavItem() {
 
             try {
 
@@ -544,12 +605,51 @@ namespace SecureDataStore.ViewModels {
                     || this.SelectedLvSecItem == null)
                     return;
 
-                this._db.UpdateItemState(this.SelectedLvSecItem.Id, 
-                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default );
+                if (this._db.SecItemUpdateFav(this.SelectedLvSecItem.Id, !this.SecItemIsFavItem) == 1) {
+
+                    this.UpdateSecItemProperties();
+                }
             }
             catch (Exception ex) {
 
                 this.LogError(ex);
+            }
+        }
+
+        void SecItemUpdateState() {
+
+            try {
+
+                if (this._db == null
+                    || this.SelectedLvSecItem == null)
+                    return;
+
+                if (this._db.SecItemUpdateState(this.SelectedLvSecItem.Id,
+                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default) == 1) {
+
+                    this.UpdateSecItemProperties();
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        void UpdateSecItemProperties() {
+
+            if (this.SelectedLvSecItem != null) {
+
+                var secItem = this._db.SecItemRead(this.SelectedLvSecItem.Id);
+                if (secItem != null) {
+
+                    var lvItem = this.ListLvSecItem.FirstOrDefault(obj => obj.Id == this.SelectedLvSecItem.Id);
+                    if (lvItem != null) {
+
+                        lvItem.Update(secItem);
+                        this.SelectedLvSecItem = lvItem;
+                    }
+                }                
             }
         }
 
@@ -690,13 +790,7 @@ namespace SecureDataStore.ViewModels {
                     foreach (var secItem in secItemList) {
 
                         tmpList.Add(
-                            new LvSecureItemViewModel(secItem.Name, secItem.Id) {
-                                Created = secItem.Created.ToLocalTime(),
-                                Updated = secItem.Updated?.ToLocalTime(),
-                                IsFavItem = secItem.IsFavItem,
-                                State = secItem.State,
-                                ItemType = (SecItemType)secItem.ItemType
-                            });
+                            LvSecureItemViewModel.Create(secItem));
                     }
 
                     this.ListLvSecItem = new ObservableCollection<LvSecureItemViewModel>(
@@ -751,7 +845,7 @@ namespace SecureDataStore.ViewModels {
                         e.Accepted = secureItem.IsFavItem && secureItem.State == 0;
                         break;
                     case NavItemType.ShowTrash:
-                        if (secureItem.State != 1) {
+                        if (secureItem.State != DataItemState.Trash) {
                             e.Accepted = false;
                         }
                         break;

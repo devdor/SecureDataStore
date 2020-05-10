@@ -1,6 +1,5 @@
 ﻿using SecureDataStore.Dto;
 using System;
-using System.Windows.Markup;
 
 namespace SecureDataStore.ViewModels {
     public class NavItemViewModel : AbstractHeaderedViewModel {
@@ -41,7 +40,6 @@ namespace SecureDataStore.ViewModels {
 
         public static NavItemViewModel Create(SecItemType itemType) {
 
-            NavItemViewModel itemVM = null;
             switch (itemType) {
                 case SecItemType.Document:
                     return new NavItemViewModel(Util.ReadStringRes("StrSecItemDoc")) {
@@ -74,8 +72,6 @@ namespace SecureDataStore.ViewModels {
                 default:
                     throw new NotImplementedException(itemType.ToString());
             }
-
-            return itemVM;
         }
     }
 }
