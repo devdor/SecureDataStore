@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:SecureDataStore"
         xmlns:vw="clr-namespace:SecureDataStore.Views"
         xmlns:vm="clr-namespace:SecureDataStore.ViewModels"
@@ -74,6 +75,11 @@
 
             <ListBox ItemsSource="{Binding ListSysNavView.View}" SelectedItem="{Binding SelectedNavItem}" ItemTemplate="{StaticResource NavItemTemplate}" 
                      Background="SlateGray" SelectionMode="Single" Padding="5">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonUp" >
+                        <i:InvokeCommandAction Command="{Binding MouseRightButtonUpCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
@@ -139,15 +145,26 @@
                 
                 <DockPanel Margin="5">
                     <StackPanel Style="{DynamicResource CtrlListStackPanel}">
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" Value="{Binding SelectedLvSecItem.Header}"/>
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" 
+                                          Visibility="{Binding CtrlNameIsVisible, Converter={StaticResource BoolToVis}}" Value="{Binding SelectedLvSecItem.Header}"/>
+                        
                         <Separator Margin="0,5,0,5"/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}" Value=""/>
-                        <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}" Value=""/>
-                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}" Value=""/>
+                        
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrUserName}"
+                                          Visibility="{Binding CtrlUsernameIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:PwdInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrPassword}"
+                                         Visibility="{Binding CtrlPasswordIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrWebsite}"
+                                          Visibility="{Binding CtrlWebsiteIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
                     </StackPanel>
                     <Grid>
-                        <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}" Value="" Background="Green"/>
-                        <vw:FileCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Value="" Background="Red"/>
+                        <vw:MultiLineInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrNotice}"
+                                               Visibility="{Binding CtrlMultilineIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
+                        
+                        <vw:FileCtrl CtrlEditMode="{Binding Path=CtrlEditMode}"
+                                     Visibility="{Binding CtrlFileIsVisible, Converter={StaticResource BoolToVis}}" Value=""/>
                     </Grid>                    
                 </DockPanel>
             </DockPanel>

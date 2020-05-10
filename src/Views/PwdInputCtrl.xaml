@@ -13,10 +13,10 @@
     <DockPanel x:Name="LayoutRoot">
         <TextBlock Style="{StaticResource TxtHeader}"/>
         <Grid>
-            <Label Content="{Binding Value}" Visibility="{Binding TextBlockIsVisible, Converter={StaticResource BoolToVis}}" 
+            <Label Content="{Binding Value}" Visibility="{Binding TxtBlockIsVisible, Converter={StaticResource BoolToVis}}" 
                        FontWeight="SemiBold" Padding="0"/>
             <PasswordBox local:WpfPasswordHelper.Attach="True" local:WpfPasswordHelper.Password="{Binding Text, ElementName=plain, Mode=TwoWay}" 
-                         Visibility="{Binding TextBoxIsVisible, Converter={StaticResource BoolToVis}}"/>
+                         Visibility="{Binding TxtBoxIsVisible, Converter={StaticResource BoolToVis}}"/>
         </Grid>
     </DockPanel>
 </vw:BaseCtrl>

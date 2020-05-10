@@ -11,6 +11,6 @@
     </UserControl.Resources>
     <DockPanel x:Name="LayoutRoot">
         <TextBlock Style="{StaticResource TxtHeader}"/>
-        <TextBox Text="{Binding Value}" Visibility="{Binding TextBoxIsVisible, Converter={StaticResource BoolToVis}}" AcceptsReturn="True"/>
+        <TextBox Text="{Binding Value}" IsReadOnly="{Binding TxtBoxIsReadOnly}" AcceptsReturn="True"/>
     </DockPanel>
 </vw:BaseCtrl>

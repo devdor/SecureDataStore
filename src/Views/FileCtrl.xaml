@@ -7,6 +7,9 @@
              xmlns:vw="clr-namespace:SecureDataStore.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
     <Grid x:Name="LayoutRoot">
         <Border BorderBrush="Silver" BorderThickness="0.5" Padding="10">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -16,8 +19,8 @@
                     </Style>
                 </StackPanel.Resources>
                 <TextBlock Text="{Binding Value}"/>
-                <TextBlock Text="{DynamicResource StrClickToDownload}" Visibility="{Binding TextBlockDownloadIsVisible, Converter={StaticResource BoolToVis}}"/>
-                <TextBlock Text="{DynamicResource StrDragFileHere}" Visibility="{Binding TextBlockUploadIsVisible, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="{DynamicResource StrClickToDownload}" Visibility="{Binding TxtBlockDownloadIsVisible, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock Text="{DynamicResource StrDragFileHere}" Visibility="{Binding TxtBlockUploadIsVisible, Converter={StaticResource BoolToVis}}"/>
             </StackPanel>
         </Border>        
     </Grid>

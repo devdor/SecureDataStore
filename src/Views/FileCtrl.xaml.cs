@@ -63,7 +63,25 @@ namespace SecureDataStore.Views {
                 SetValue(ValueProperty, value);
             }
         }
-        #endregion        
+        #endregion
+
+        bool _txtBlockDownloadIsVisible = true;
+        public bool TxtBlockDownloadIsVisible {
+            get => _txtBlockDownloadIsVisible;
+            set {
+                _txtBlockDownloadIsVisible = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        bool _txtBlockUploadIsVisible;
+        public bool TxtBlockUploadIsVisible {
+            get => _txtBlockUploadIsVisible;
+            set {
+                _txtBlockUploadIsVisible = value;
+                this.NotifyPropertyChanged();
+            }
+        }
         #endregion
         public FileCtrl() {
 
@@ -74,6 +92,8 @@ namespace SecureDataStore.Views {
         static void CtrlModeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 
             var mode = (CtrlMode)e.NewValue;
+            ((FileCtrl)d).TxtBlockDownloadIsVisible = mode == CtrlMode.Display ? true : false;
+            ((FileCtrl)d).TxtBlockUploadIsVisible = mode == CtrlMode.Display ? false : true;
         }
     }
 }
