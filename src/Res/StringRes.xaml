@@ -40,6 +40,7 @@
     <sys:String x:Key="StrTrash">Trash</sys:String>
     <sys:String x:Key="StrEmptyTrash">Empty Trash</sys:String>
     <sys:String x:Key="StrMoveToTrash">Move to trash</sys:String>
+    <sys:String x:Key="StrRestoreFromTrash">Restore from trash</sys:String>
     <sys:String x:Key="StrPwdLength">Password Length</sys:String>
     <sys:String x:Key="StrNonAlphaNumChars">Non-Alphanumeric Characters</sys:String>
     <sys:String x:Key="StrPwdGenerator">Password Generator</sys:String>

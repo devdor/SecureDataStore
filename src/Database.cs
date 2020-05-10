@@ -77,7 +77,7 @@ namespace SecureDataStore {
             }
         }
 
-        public void SecItemMoveToTrash(int id) {
+        public void UpdateItemState(int id, DataItemState state) {
 
             if (this._conString == null)
                 throw new MissingFieldException("SQLiteConnectionString");
@@ -89,7 +89,7 @@ namespace SecureDataStore {
 
                 foreach (var secItem in querySecItem) {
 
-                    secItem.State = (int)DataItemState.Trash;
+                    secItem.State = (int)state;
                     secItem.Updated = DateTime.UtcNow;
 
                     db.Update(secItem);

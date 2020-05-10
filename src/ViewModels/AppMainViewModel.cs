@@ -225,7 +225,7 @@ namespace SecureDataStore.ViewModels {
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
-            this.SecItemMoveToTrashCommand = new DelegateCommand(this.RaiseSecItemMoveToTrash);
+            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SelectedSecItemUpdateState);
             this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
             this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
             this.SecItemMouseRightBtnUpCommand = new DelegateCommand(this.RaiseSecItemMouseRightBtnUp);
@@ -332,14 +332,28 @@ namespace SecureDataStore.ViewModels {
                     Header = Util.ReadStringRes("StrMoveToTrash"),
                     Tag = "MOVE_TO_TRASH"
                 };
-                menItemMoveToTrash.Click += ContextMenSecItenCClick;
+
+                MenuItem menItemRestoreFromTrash = new MenuItem() {
+                    Header = Util.ReadStringRes("StrRestoreFromTrash"),
+                    Tag = "RESTORE_FROM_TRASH"
+                };
 
                 ContextMenu ctxMenu = new ContextMenu();
-                if (this.SelectedLvSecItem.State != (int)DataItemState.Trash) {
-                    ctxMenu.Items.Add(menItemMoveToTrash);
+                switch ((DataItemState)this.SelectedLvSecItem.State) {
+                    case DataItemState.Trash:
+                        ctxMenu.Items.Add(menItemRestoreFromTrash);
+                        break;
+                    case DataItemState.Default:
+                        ctxMenu.Items.Add(menItemMoveToTrash);
+                        break;
                 }
 
                 if (ctxMenu.Items.Count > 0) {
+
+                    foreach (MenuItem menItem in ctxMenu.Items) {
+                        menItem.Click += ContextMenSecItenCClick;
+                    }
+
                     ctxMenu.IsOpen = true;
                 }
             }
@@ -364,8 +378,9 @@ namespace SecureDataStore.ViewModels {
                     switch (menItem.Tag.ToString()) {
 
                         case "MOVE_TO_TRASH":
+                        case "RESTORE_FROM_TRASH":
 
-                            this.RaiseSecItemMoveToTrash();
+                            this.SelectedSecItemUpdateState();
                             this.LoadDatabase();
                             break;
                     }
@@ -391,7 +406,6 @@ namespace SecureDataStore.ViewModels {
                     Header = Util.ReadStringRes("StrEmptyTrash"),
                     Tag = "EMPTY_TRASH"
                 };
-                menItenClearTrash.Click += ContextMenNavItenCClick;
 
                 ContextMenu ctxMenu = new ContextMenu();
                 switch (this.SelectedNavItem.NavType) {
@@ -401,6 +415,11 @@ namespace SecureDataStore.ViewModels {
                 }
 
                 if (ctxMenu.Items.Count > 0) {
+
+                    foreach (MenuItem menItem in ctxMenu.Items) {
+                        menItem.Click += ContextMenNavItenCClick;
+                    }
+
                     ctxMenu.IsOpen = true;
                 }
             }
@@ -458,17 +477,16 @@ namespace SecureDataStore.ViewModels {
             Application.Current.Shutdown();
         }
 
-        void RaiseSecItemMoveToTrash() {
+        void SelectedSecItemUpdateState() {
 
             try {
 
-                if (this.SelectedLvSecItem == null)
+                if (this._db == null
+                    || this.SelectedLvSecItem == null)
                     return;
 
-                if (this._db == null)
-                    return;
-
-                this._db.SecItemMoveToTrash(this.SelectedLvSecItem.Id);
+                this._db.UpdateItemState(this.SelectedLvSecItem.Id, 
+                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default );
             }
             catch (Exception ex) {
 
