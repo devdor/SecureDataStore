@@ -46,7 +46,7 @@
                     </TextBlock>
                 </DockPanel>
             </Button>
-            <Button Command="{Binding AddCategoryItemCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
+            <Button Command="{Binding SecItemCreateCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
                 <DockPanel>
                     <Image Source="../Res/baseline_add_circle_outline_black_18dp.png"/>
                     <TextBlock>

@@ -45,7 +45,9 @@
     <sys:String x:Key="StrNonAlphaNumChars">Non-Alphanumeric Characters</sys:String>
     <sys:String x:Key="StrPwdGenerator">Password Generator</sys:String>
     <sys:String x:Key="StrClickToDownload">Click to Download</sys:String>
-    <sys:String x:Key="StrDragFileHere">Drag file here to upload</sys:String>    
+    <sys:String x:Key="StrDragFileHere">Drag file here to upload</sys:String>
+    <sys:String x:Key="StrAll">All</sys:String>
+    <sys:String x:Key="StrFavorites">Favorites</sys:String>
     
     <sys:String x:Key="StrToolTipAddSecItem">Add new Secure item</sys:String>
     <sys:String x:Key="StrToolTipOpenDatabaseFile">Open Database from file</sys:String>

@@ -37,5 +37,16 @@ namespace SecureDataStore.ViewModels {
         public LvSecureItemViewModel(string header, int id)
             : base(header, id) {
         }
+
+        public override string ToString() {
+
+            if (String.IsNullOrEmpty(this.Header)
+                && this.Created > DateTime.MinValue) {
+
+                return $"{this.ItemType} {Util.ReadStringRes("StrCreated")} {Created}";
+            }
+
+            return base.ToString();
+        }
     }
 }

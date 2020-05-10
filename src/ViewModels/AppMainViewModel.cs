@@ -166,6 +166,12 @@ namespace SecureDataStore.ViewModels {
             get => _ctrlFileIsVisible;
             set => SetProperty(ref _ctrlFileIsVisible, value);
         }
+
+        bool _isEnabled = false;
+        public bool IsEnabled {
+            get => _isEnabled;
+            set => SetProperty(ref _isEnabled, value);
+        }
         #endregion
 
         #region Commands
@@ -185,7 +191,7 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-        public DelegateCommand AddCategoryItemCommand {
+        public DelegateCommand SecItemCreateCommand {
             get;
             set;
         }
@@ -221,7 +227,7 @@ namespace SecureDataStore.ViewModels {
             this.AppExitCommand = new DelegateCommand(this.RaiseAppExit);
             this.OpenDbCommand = new DelegateCommand(this.RaiseOpenDb);
             this.NewDbCommand = new DelegateCommand(this.RaiseNewDb);
-            this.AddCategoryItemCommand = new DelegateCommand(this.RaiseAddCategoryItem);
+            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => IsEnabled);            ;
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
@@ -230,48 +236,24 @@ namespace SecureDataStore.ViewModels {
             this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
             this.SecItemMouseRightBtnUpCommand = new DelegateCommand(this.RaiseSecItemMouseRightBtnUp);
 
-            string GetResString(string img) {
-                return $"../Res/{img}";
-            }
-
             this.ListSysNav = new ObservableCollection<NavItemViewModel>() {
-                new NavItemViewModel("All") {
+                new NavItemViewModel(Util.ReadStringRes("StrAll")) {
                     NavType = NavItemType.NULL,
                     Group = Util.ReadStringRes("StrGrpCommon"),
-                    ImgSource = GetResString("baseline_all_inclusive_white_18dp.png")
+                    ImgSource = Util.GetResPath("baseline_all_inclusive_white_18dp.png")
                 },
-                new NavItemViewModel("Favorites") {
+                new NavItemViewModel(Util.ReadStringRes("StrFavorites")) {
                     NavType = NavItemType.ShowFavorites,
                     Group = Util.ReadStringRes("StrGrpCommon"),
-                    ImgSource = GetResString("baseline_star_outline_white_18dp.png")
+                    ImgSource = Util.GetResPath("baseline_star_outline_white_18dp.png")
                 },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemLogin")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Login,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("baseline_cloud_queue_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemDoc")){
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Document,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("baseline_mail_outline_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemNote")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.SecureNote,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("outline_insert_drive_file_white_18dp.png")
-                },
-                new NavItemViewModel(Util.ReadStringRes("StrSecItemPwd")) {
-                    NavType = NavItemType.Category,
-                    SecItemType = SecItemType.Password,
-                    Group = Util.ReadStringRes("StrGrpCategories"),
-                    ImgSource = GetResString("outline_vpn_key_white_18dp.png")
-                },
+                NavItemViewModel.Create(SecItemType.Login),
+                NavItemViewModel.Create(SecItemType.Document),
+                NavItemViewModel.Create(SecItemType.SecureNote),
+                NavItemViewModel.Create(SecItemType.Password),
                 new NavItemViewModel(Util.ReadStringRes("StrTrash")) {
                     NavType = NavItemType.ShowTrash,
-                    ImgSource = GetResString("outline_delete_white_18dp.png") }
+                    ImgSource = Util.GetResPath("outline_delete_white_18dp.png") }
             };
 
             var view = new CollectionViewSource();
@@ -477,6 +459,67 @@ namespace SecureDataStore.ViewModels {
             Application.Current.Shutdown();
         }
 
+        void RaiseSecItemCreate() {
+            try {
+
+                ContextMenu ctxMenu = new ContextMenu();
+                foreach (SecItemType secType in Enum.GetValues(typeof(SecItemType))) {
+
+                    var navItem = this.ListSysNav.FirstOrDefault(
+                        navItem => navItem.SecItemType == secType && navItem.NavType == NavItemType.Category);
+
+                    if (navItem != null) {
+
+                        var menItem = new MenuItem() {
+                            Header = navItem.Header,
+                            Tag = navItem.SecItemType
+                        };
+
+                        menItem.Click += OnSecItemCreateClick;
+                        ctxMenu.Items.Add(menItem);
+                    }
+                }
+
+                ctxMenu.IsOpen = true;
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        private void OnSecItemCreateClick(object sender, RoutedEventArgs e) {
+
+            try {
+
+                if (this._db == null
+                    || !(sender is MenuItem))
+                    return;
+
+                var menItem = sender as MenuItem;
+                if (menItem.Tag != null
+                    && menItem.Tag  is SecItemType) {
+
+                    var id = this._db.Create(
+                        SecItem.Create((SecItemType)menItem.Tag));
+
+                    if (id > 0) {
+
+                        this.LoadDatabase();
+                    }                    
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        bool CanRaiseSecItemCreate() {
+
+            return this._isEnabled;
+        }
+
         void SelectedSecItemUpdateState() {
 
             try {
@@ -501,18 +544,6 @@ namespace SecureDataStore.ViewModels {
                 }).ShowView(
                     new PwdCreateArgs(
                         this.Log, Util.ReadStringRes("StrPwdGenerator")));
-            }
-            catch (Exception ex) {
-
-                this.LogError(ex);
-            }
-        }
-
-        void RaiseAddCategoryItem() {
-            try {
-
-                if (this._db == null)
-                    return;
             }
             catch (Exception ex) {
 
@@ -614,28 +645,32 @@ namespace SecureDataStore.ViewModels {
                 if (this._db == null)
                     return;
 
+                var prevNavItemType = this.SelectedNavItem != null ? this.SelectedNavItem.NavType : NavItemType.NULL;
                 var secItemList = this._db.SecItemReadList(navType);
+
                 if (!DictionaryUtils.IsNullOrEmpty(secItemList)) {
 
-                    this.ListLvSecItem = new ObservableCollection<LvSecureItemViewModel>();
-                    foreach (var secItem in secItemList.OrderBy(obj => obj.Name)) {
+                    var tmpList = new List<LvSecureItemViewModel>();
+                    foreach (var secItem in secItemList) {
 
-                        this.ListLvSecItem.Add(
+                        tmpList.Add(
                             new LvSecureItemViewModel(secItem.Name, secItem.Id) {
-                                Created = secItem.Created,
-                                Updated = secItem.Updated,
+                                Created = secItem.Created.ToLocalTime(),
+                                Updated = secItem.Updated?.ToLocalTime(),
                                 IsFavItem = secItem.IsFavItem,
                                 State = secItem.State,
                                 ItemType = (SecItemType)secItem.ItemType
                             });
                     }
+
+                    this.ListLvSecItem = new ObservableCollection<LvSecureItemViewModel>(
+                        tmpList.OrderBy(obj => obj.Header));
                 }
 
-                if (this.SelectedNavItem == null) {
-                    this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == NavItemType.NULL);
-                }
-                
+
+                this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == prevNavItemType);
                 this.AppStatusMsg = $"{this._db.DbName} loaded";
+                this.IsEnabled = true;
             }
             catch (Exception ex) {
 
