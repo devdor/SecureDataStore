@@ -124,13 +124,15 @@
                                 <TextBlock Text="{DynamicResource StrEdit}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveIsVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" 
+                                Visibility="{Binding BtnSecItemSaveIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_save_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrSave}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditIsVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" 
+                                Visibility="{Binding BtnSecItemCancelEditIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_cancel_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrCancel}"/>
@@ -138,19 +140,28 @@
                         </Button>
                     </ToolBarPanel>
 
-                    <ToggleButton Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Margin="0,0,3,0" IsChecked="{Binding SelectedLvSecItem.IsFavItem}">
-                        <Image Source="../Res/outline_grade_black_18dp.png" Width="18" Height="18"/>
-                    </ToggleButton>
+                    <Button Grid.Column="1" Command="{Binding SecItemFavItemCommand}" Background="Transparent" BorderBrush="Transparent" Margin="0,0,3,0">                        
+                        <Grid>
+                            <Grid.Resources>
+                                <Style TargetType="{x:Type Image}">
+                                    <Setter Property="Width" Value="18"/>
+                                    <Setter Property="Height" Value="18"/>
+                                </Style>
+                            </Grid.Resources>
+                            <Image Source="../Res/outline_grade_black_18dp.png" Visibility="{Binding FavIconDefaultIsVisible, Converter={StaticResource BoolToVis}}"/>
+                            <Image Source="../Res/outline_grade_black_filled_18dp.png" Visibility="{Binding FavIconActiveIsVisible, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                    </Button>
                 </Grid>
 
                 <StackPanel Style="{DynamicResource CtrlListStackPanel}" DockPanel.Dock="Bottom" Margin="5">
                     <DockPanel>
                         <TextBlock Text="{DynamicResource StrCreated}"/>
-                        <TextBlock Text="{Binding SelectedLvSecItem.Created}"/>
+                        <TextBlock Text="{Binding SecItemCreated}"/>
                     </DockPanel>
                     <DockPanel Margin="0,10,0,0">
                         <TextBlock Text="{DynamicResource StrUpdated}"/>
-                        <TextBlock Text="{Binding SelectedLvSecItem.Updated}"/>
+                        <TextBlock Text="{Binding SecItemUpdated}"/>
                     </DockPanel>
                 </StackPanel>
 
@@ -159,7 +170,7 @@
                 <DockPanel Margin="5">
                     <StackPanel Style="{DynamicResource CtrlListStackPanel}">
                         <vw:TextInputCtrl CtrlEditMode="{Binding Path=CtrlEditMode}" Label="{StaticResource StrName}" 
-                                          Visibility="{Binding CtrlNameIsVisible, Converter={StaticResource BoolToVis}}" Value="{Binding SelectedLvSecItem.Header}"/>
+                                          Visibility="{Binding CtrlNameIsVisible, Converter={StaticResource BoolToVis}}" Value="{Binding SecItemHeader}"/>
                         
                         <Separator Margin="0,5,0,5"/>
                         

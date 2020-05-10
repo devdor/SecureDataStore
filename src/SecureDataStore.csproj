@@ -26,6 +26,7 @@
     <None Remove="Res\outline_delete_white_18dp.png" />
     <None Remove="Res\outline_edit_black_18dp.png" />
     <None Remove="Res\outline_grade_black_18dp.png" />
+    <None Remove="Res\outline_grade_black_filled_18dp.png" />
     <None Remove="Res\outline_insert_drive_file_white_18dp.png" />
     <None Remove="Res\outline_save_black_18dp.png" />
     <None Remove="Res\outline_vpn_key_white_18dp.png" />
@@ -60,6 +61,7 @@
     <Resource Include="Res\outline_delete_white_18dp.png" />
     <Resource Include="Res\outline_edit_black_18dp.png" />
     <Resource Include="Res\outline_grade_black_18dp.png" />
+    <Resource Include="Res\outline_grade_black_filled_18dp.png" />
     <Resource Include="Res\outline_insert_drive_file_white_18dp.png" />
     <Resource Include="Res\outline_save_black_18dp.png" />
     <Resource Include="Res\outline_vpn_key_white_18dp.png" />

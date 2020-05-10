@@ -139,6 +139,23 @@ namespace SecureDataStore {
             }
         }
 
+        public SecItem SecItemRead(int id) {
+
+            if (this._conString == null)
+                throw new MissingFieldException("SQLiteConnectionString");
+
+            using (var db = new SQLiteConnection(this._conString)) {
+
+                var query = db.Table<SecItem>().Where(row => row.Id == id);
+                if (query != null) {
+
+                    return query.FirstOrDefault();
+                }
+
+                return null;
+            }
+        }
+
         public IEnumerable<SecValueItem> ValueItemReadList(int secItemId) {
 
             if (this._conString == null)
