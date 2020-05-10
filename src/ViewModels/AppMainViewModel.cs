@@ -75,7 +75,7 @@ namespace SecureDataStore.ViewModels {
                     this.CtrlWebsiteIsVisible = false;
                     this.CtrlMultilineIsVisible = false;
                     this.CtrlFileIsVisible = false;
-                    
+
                     switch (value.ItemType) {
                         case SecItemType.Document:
                             this.CtrlFileIsVisible = true;
@@ -88,7 +88,7 @@ namespace SecureDataStore.ViewModels {
                             this.CtrlMultilineIsVisible = true;
                             break;
                         case SecItemType.Password:
-                            this.CtrlNameIsVisible = true;                            
+                            this.CtrlNameIsVisible = true;
                             this.CtrlPasswordIsVisible = true;
                             this.CtrlWebsiteIsVisible = true;
                             break;
@@ -98,6 +98,7 @@ namespace SecureDataStore.ViewModels {
                             break;
                     }
                 }
+
                 SetProperty(ref _selectedLvSecItem, value);
             }
         }
@@ -248,7 +249,7 @@ namespace SecureDataStore.ViewModels {
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
-            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SelectedSecItemUpdateState);
+            this.SecItemMoveToTrashCommand = new DelegateCommand(this.SecItemUpdateState);
             this.PwdGeneratorCommand = new DelegateCommand(this.RaisePwdGenerator);
             this.NavMouseRightBtnUpCommand = new DelegateCommand(this.RaiseNavMouseRightBtnUp);
             this.SecItemMouseRightBtnUpCommand = new DelegateCommand(this.RaiseSecItemMouseRightBtnUp);
@@ -378,7 +379,7 @@ namespace SecureDataStore.ViewModels {
                         case "MOVE_TO_TRASH":
                         case "RESTORE_FROM_TRASH":
 
-                            this.SelectedSecItemUpdateState();
+                            this.SecItemUpdateState();
                             this.LoadDatabase();
                             break;
                     }
@@ -536,7 +537,7 @@ namespace SecureDataStore.ViewModels {
             return this._ctrlSecItemCreateIsEnabled;
         }
 
-        void SelectedSecItemUpdateState() {
+        void SecItemUpdateState() {
 
             try {
 
@@ -544,8 +545,28 @@ namespace SecureDataStore.ViewModels {
                     || this.SelectedLvSecItem == null)
                     return;
 
-                this._db.UpdateItemState(this.SelectedLvSecItem.Id, 
-                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default );
+                if (this._db.SecItemUpdateState(this.SelectedLvSecItem.Id,
+                    (DataItemState)this.SelectedLvSecItem.State == DataItemState.Default ? DataItemState.Trash : DataItemState.Default) == 1) {
+                
+                }
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        void SecItemUpdateFav(bool isFav) {
+            try {
+
+                if (this._db == null
+                    || this.SelectedLvSecItem == null)
+                    return;
+
+                if (this._db.SecItemUpdateFav(this.SelectedLvSecItem.Id, isFav) == 1) {
+                
+
+                }
             }
             catch (Exception ex) {
 

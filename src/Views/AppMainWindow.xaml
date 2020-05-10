@@ -138,7 +138,7 @@
                         </Button>
                     </ToolBarPanel>
 
-                    <ToggleButton Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Margin="0,0,3,0">
+                    <ToggleButton Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Margin="0,0,3,0" IsChecked="{Binding SelectedLvSecItem.IsFavItem}">
                         <Image Source="../Res/outline_grade_black_18dp.png" Width="18" Height="18"/>
                     </ToggleButton>
                 </Grid>

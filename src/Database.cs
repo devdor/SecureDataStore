@@ -77,7 +77,7 @@ namespace SecureDataStore {
             }
         }
 
-        public void UpdateItemState(int id, DataItemState state) {
+        public int SecItemUpdateState(int id, DataItemState state) {
 
             if (this._conString == null)
                 throw new MissingFieldException("SQLiteConnectionString");
@@ -92,9 +92,33 @@ namespace SecureDataStore {
                     secItem.State = (int)state;
                     secItem.Updated = DateTime.UtcNow;
 
-                    db.Update(secItem);
+                    return db.Update(secItem);
                 }
             }
+
+            return 0;
+        }
+
+        public int SecItemUpdateFav(int id, bool isFav) {
+
+            if (this._conString == null)
+                throw new MissingFieldException("SQLiteConnectionString");
+
+            using (var db = new SQLiteConnection(this._conString)) {
+
+                var querySecItem = db.Table<SecItem>().Where(
+                    secItem => secItem.Id == id);
+
+                foreach (var secItem in querySecItem) {
+
+                    secItem.IsFavItem = isFav;
+                    secItem.Updated = DateTime.UtcNow;
+
+                    return db.Update(secItem);
+                }
+            }
+
+            return 0;
         }
 
         public IEnumerable<SecItem> SecItemReadList(NavItemType navItemType) {
