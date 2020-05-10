@@ -27,8 +27,8 @@
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Command="{Binding AppExitCommand}" Modifiers="Alt" Key="F4"/>
-        <KeyBinding Command="{Binding OpenDbCommand}" Modifiers="Ctrl" Key="O"/>
-        <KeyBinding Command="{Binding NewDbCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
+        <KeyBinding Command="{Binding DbOpenCommand}" Modifiers="Ctrl" Key="O"/>
+        <KeyBinding Command="{Binding SecItemCreateCommand}" Modifiers="Ctrl+SHIFT" Key="N"/>
         <KeyBinding Command="{Binding SecItemEditCommand}" Modifiers="Ctrl" Key="E"/>
         <KeyBinding Command="{Binding SecItemEditSaveCommand}" Modifiers="Ctrl" Key="S"/>
         <KeyBinding Command="{Binding SecItemCancelEditCommand}" Key="Esc"/>
@@ -37,13 +37,19 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItemList}"/>
         <ToolBarPanel>
-            <Button Command="{Binding OpenDbCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}">
+            <Button Command="{Binding DbOpenCommand}" ToolTip="{DynamicResource StrToolTipOpenDatabaseFile}" Visibility="{Binding BtnDbOpenIsVisible, Converter={StaticResource BoolToVis}}">
                 <DockPanel>
                     <Image Source="../Res/baseline_folder_open_black_18dp.png"/>
                     <TextBlock>
                         <Run Text="{DynamicResource StrOpen}"/>
                         <Run Text="{DynamicResource StrPunctuation}"/>
                     </TextBlock>
+                </DockPanel>
+            </Button>
+            <Button Command="{Binding DbCloseCommand}" ToolTip="{DynamicResource StrToolTipCloseDatabase}" Visibility="{Binding BtnDbCloseIsVisible, Converter={StaticResource BoolToVis}}">
+                <DockPanel>
+                    <Image Source="../Res/baseline_close_black_18dp.png"/>
+                    <TextBlock Text="{DynamicResource StrClose}"/>
                 </DockPanel>
             </Button>
             <Button Command="{Binding SecItemCreateCommand}" ToolTip="{DynamicResource StrToolTipAddSecItem}">
@@ -112,19 +118,19 @@
                     </Grid.ColumnDefinitions>
 
                     <ToolBarPanel>
-                        <Button Command="{Binding SecItemEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemEdit}" Visibility="{Binding BtnSecItemEditVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemEdit}" Visibility="{Binding BtnSecItemEditIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_edit_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrEdit}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemEditSaveCommand}" ToolTip="{DynamicResource StrToolTipSecItemSave}" Visibility="{Binding BtnSecItemSaveIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_save_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrSave}"/>
                             </DockPanel>
                         </Button>
-                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditVisible, Converter={StaticResource BoolToVis}}">
+                        <Button Command="{Binding SecItemCancelEditCommand}" ToolTip="{DynamicResource StrToolTipSecItemCancel}" Visibility="{Binding BtnSecItemCancelEditIsVisible, Converter={StaticResource BoolToVis}}">
                             <DockPanel>
                                 <Image Source="../Res/outline_cancel_black_18dp.png"/>
                                 <TextBlock Text="{DynamicResource StrCancel}"/>

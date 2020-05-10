@@ -102,31 +102,31 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        bool _btnSecItemEditVisible = true;
-        public bool BtnSecItemEditVisible {
-            get => _btnSecItemEditVisible;
-            set => SetProperty(ref _btnSecItemEditVisible, value);
+        bool _btnSecItemEditIsVisible = true;
+        public bool BtnSecItemEditIsVisible {
+            get => _btnSecItemEditIsVisible;
+            set => SetProperty(ref _btnSecItemEditIsVisible, value);
         }
 
-        bool _btnSecItemSaveVisible = false;
-        public bool BtnSecItemSaveVisible {
-            get => _btnSecItemSaveVisible;
-            set => SetProperty(ref _btnSecItemSaveVisible, value);
+        bool _btnSecItemSaveIsVisible = false;
+        public bool BtnSecItemSaveIsVisible {
+            get => _btnSecItemSaveIsVisible;
+            set => SetProperty(ref _btnSecItemSaveIsVisible, value);
         }
 
-        bool _btnSecItemCancelEditVisible = false;
-        public bool BtnSecItemCancelEditVisible {
-            get => _btnSecItemCancelEditVisible;
-            set => SetProperty(ref _btnSecItemCancelEditVisible, value);
+        bool _btnSecItemCancelEditIsVisible = false;
+        public bool BtnSecItemCancelEditIsVisible {
+            get => _btnSecItemCancelEditIsVisible;
+            set => SetProperty(ref _btnSecItemCancelEditIsVisible, value);
         }
 
         CtrlMode _ctrlEditMode = CtrlMode.Display;
         public CtrlMode CtrlEditMode {
             get => _ctrlEditMode;
             set {
-                this.BtnSecItemCancelEditVisible = value == CtrlMode.Edit ? true : false;
-                this.BtnSecItemSaveVisible = value == CtrlMode.Edit ? true : false;
-                this.BtnSecItemEditVisible = !this.BtnSecItemSaveVisible;
+                this.BtnSecItemCancelEditIsVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemSaveIsVisible = value == CtrlMode.Edit ? true : false;
+                this.BtnSecItemEditIsVisible = !this.BtnSecItemSaveIsVisible;
                 SetProperty(ref _ctrlEditMode, value);
             }
         }
@@ -167,10 +167,22 @@ namespace SecureDataStore.ViewModels {
             set => SetProperty(ref _ctrlFileIsVisible, value);
         }
 
-        bool _isEnabled = false;
-        public bool IsEnabled {
-            get => _isEnabled;
-            set => SetProperty(ref _isEnabled, value);
+        bool _ctrlSecItemCreateIsEnabled = false;
+        public bool CtrlSecItemCreateIsEnabled {
+            get => _ctrlSecItemCreateIsEnabled;
+            set => SetProperty(ref _ctrlSecItemCreateIsEnabled, value);
+        }
+
+        bool _btnDbOpenIsVisible = true;
+        public bool BtnDbOpenIsVisible {
+            get => _btnDbOpenIsVisible;
+            set => SetProperty(ref _btnDbOpenIsVisible, value);
+        }
+
+        bool _btnDbCloseIsVisible = false;
+        public bool BtnDbCloseIsVisible {
+            get => _btnDbCloseIsVisible;
+            set => SetProperty(ref _btnDbCloseIsVisible, value);
         }
         #endregion
 
@@ -179,11 +191,15 @@ namespace SecureDataStore.ViewModels {
             get;
             set;
         }
-        public DelegateCommand OpenDbCommand {
+        public DelegateCommand DbOpenCommand {
             get;
             set;
         }
-        public DelegateCommand NewDbCommand {
+        public DelegateCommand DbCloseCommand {
+            get;
+            set;
+        }
+        public DelegateCommand DbCreateCommand {
             get;
             set;
         }
@@ -225,9 +241,10 @@ namespace SecureDataStore.ViewModels {
             : base(logger, viewHeader) {
 
             this.AppExitCommand = new DelegateCommand(this.RaiseAppExit);
-            this.OpenDbCommand = new DelegateCommand(this.RaiseOpenDb);
-            this.NewDbCommand = new DelegateCommand(this.RaiseNewDb);
-            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => IsEnabled);            ;
+            this.DbOpenCommand = new DelegateCommand(this.RaiseDbOpen);
+            this.DbCloseCommand = new DelegateCommand(this.RaiseDbClose);
+            this.DbCreateCommand = new DelegateCommand(this.RaiseDbCreate);
+            this.SecItemCreateCommand = new DelegateCommand(this.RaiseSecItemCreate, CanRaiseSecItemCreate).ObservesProperty(() => CtrlSecItemCreateIsEnabled);            ;
             this.SecItemCancelEditCommand = new DelegateCommand(this.RaiseSecItemCancelEdit);
             this.SecItemEditCommand = new DelegateCommand(this.RaiseSecItemEdit);
             this.SecItemEditSaveCommand = new DelegateCommand(this.RaiseSecItemSave);
@@ -268,8 +285,7 @@ namespace SecureDataStore.ViewModels {
                         new MenuItemViewModel(Util.ReadStringRes("StrNew")) {
                           MenuItemList = new List<MenuItemViewModel>() {
                               new MenuItemViewModel(Util.ReadStringRes("StrDatabase", true)) {
-                                  Command = this.NewDbCommand,
-                                  InputGestureText = Util.ReadStringRes("StrGestureCtrl_Shift_N")
+                                  Command = this.DbCreateCommand
                               }
                           }
                         },
@@ -277,7 +293,7 @@ namespace SecureDataStore.ViewModels {
                         new MenuItemViewModel(Util.ReadStringRes("StrOpen")) {
                             MenuItemList = new List<MenuItemViewModel>() {
                                 new MenuItemViewModel(Util.ReadStringRes("StrDatabase", true)) {
-                                    Command = this.OpenDbCommand,
+                                    Command = this.DbOpenCommand,
                                     InputGestureText = Util.ReadStringRes("StrGestureCtrl_O")
                                 }
                             }
@@ -517,7 +533,7 @@ namespace SecureDataStore.ViewModels {
 
         bool CanRaiseSecItemCreate() {
 
-            return this._isEnabled;
+            return this._ctrlSecItemCreateIsEnabled;
         }
 
         void SelectedSecItemUpdateState() {
@@ -551,7 +567,7 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void RaiseNewDb() {
+        void RaiseDbCreate() {
             try {
 
                 new NewDatabaseViewService(r => {
@@ -574,7 +590,25 @@ namespace SecureDataStore.ViewModels {
             }
         }
 
-        void RaiseOpenDb() {
+        void RaiseDbClose() {
+            try {
+
+                this.LvSecItemCollectionView = null;
+                this.ListLvSecItem = null;
+                this.SelectedLvSecItem = null; 
+                this._db = null;
+
+                this.CtrlSecItemCreateIsEnabled = false;
+                this.BtnDbCloseIsVisible = false;
+                this.BtnDbOpenIsVisible = true;
+            }
+            catch (Exception ex) {
+
+                this.LogError(ex);
+            }
+        }
+
+        void RaiseDbOpen() {
             try {
 
                 var appSettings = this.ReadCurrentAppSettings();
@@ -586,6 +620,8 @@ namespace SecureDataStore.ViewModels {
                             this.Log, new FileInfo(r.DbFileName), r.Password);
 
                         this.LoadDatabase();
+                        this.BtnDbOpenIsVisible = false;
+                        this.BtnDbCloseIsVisible = true;
 
                         if (!Directory.Exists(ConstValue.USER_SETTINGS_PATH))
                             Directory.CreateDirectory(ConstValue.USER_SETTINGS_PATH);
@@ -670,7 +706,7 @@ namespace SecureDataStore.ViewModels {
 
                 this.SelectedNavItem = this.ListSysNav.FirstOrDefault(obj => obj.NavType == prevNavItemType);
                 this.AppStatusMsg = $"{this._db.DbName} loaded";
-                this.IsEnabled = true;
+                this.CtrlSecItemCreateIsEnabled = true;
             }
             catch (Exception ex) {
 

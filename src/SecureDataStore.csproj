@@ -14,8 +14,11 @@
     <None Remove="Res\app_unlocked.ico" />
     <None Remove="Res\baseline_add_circle_outline_black_18dp.png" />
     <None Remove="Res\baseline_all_inclusive_white_18dp.png" />
+    <None Remove="Res\baseline_close_black_18dp.png" />
     <None Remove="Res\baseline_cloud_queue_white_18dp.png" />
     <None Remove="Res\baseline_folder_open_black_18dp.png" />
+    <None Remove="Res\baseline_lock_black_18dp.png" />
+    <None Remove="Res\baseline_lock_open_black_18dp.png" />
     <None Remove="Res\baseline_mail_outline_white_18dp.png" />
     <None Remove="Res\baseline_star_outline_white_18dp.png" />
     <None Remove="Res\openfolder.png" />
@@ -46,8 +49,11 @@
     <Resource Include="Res\app_unlocked.ico" />
     <Resource Include="Res\baseline_add_circle_outline_black_18dp.png" />
     <Resource Include="Res\baseline_all_inclusive_white_18dp.png" />
+    <Resource Include="Res\baseline_close_black_18dp.png" />
     <Resource Include="Res\baseline_cloud_queue_white_18dp.png" />
     <Resource Include="Res\baseline_folder_open_black_18dp.png" />
+    <Resource Include="Res\baseline_lock_black_18dp.png" />
+    <Resource Include="Res\baseline_lock_open_black_18dp.png" />
     <Resource Include="Res\baseline_mail_outline_white_18dp.png" />
     <Resource Include="Res\baseline_star_outline_white_18dp.png" />
     <Resource Include="Res\outline_cancel_black_18dp.png" />
